@@ -24,9 +24,9 @@ class RiskManager(BaseAgent):
         size_pct = trade.get("size_pct", 0)
         # 1. Block trade if size_pct > MAX_SIZE_PCT
         if size_pct > MAX_SIZE_PCT:
-            return {"approved": False, "new_size_pct": 0}
+            return {"approved": False, "new_size_pct": 0, "original_size_pct": size_pct, "risk_analysis": "Trade size exceeds max allowed", "rationale": "Trade size exceeds max allowed"}
         # 2. If action == 'flat', auto-approve
         if action == "flat":
-            return {"approved": True, "new_size_pct": 0}
+            return {"approved": True, "new_size_pct": 0, "original_size_pct": size_pct, "risk_analysis": "Trade auto-approved (flat)", "rationale": "Trade auto-approved (flat)"}
         # 3. Approve, possibly resize
-        return {"approved": True, "new_size_pct": min(size_pct, MAX_SIZE_PCT)}
+        return {"approved": True, "new_size_pct": min(size_pct, MAX_SIZE_PCT), "original_size_pct": size_pct, "risk_analysis": "Trade approved", "rationale": "Trade approved"}
