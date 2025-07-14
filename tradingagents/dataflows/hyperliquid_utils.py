@@ -17,7 +17,7 @@ class HyperliquidWebSocket:
     def __init__(self, symbols: List[str], callback: Callable):
         self.symbols = symbols
         self.callback = callback
-        self.ws_url = "wss://api.hyperliquid.xyz/ws"
+        self.ws_url = "wss://api.hyperliquid.xyz/ws"  # Keep this URL
         self.running = False
         self.reconnect_delay = 1
         self.max_reconnect_delay = 60
@@ -28,15 +28,25 @@ class HyperliquidWebSocket:
             self.websocket = await websockets.connect(self.ws_url)
             logger.info(f"Connected to Hyperliquid WebSocket")
             
-            # Subscribe to symbols
+            # Subscribe to symbols - Hyperliquid uses a different format
             for symbol in self.symbols:
+                # Try different subscription formats for Hyperliquid
+                # Format 1: Simple subscribe
                 subscribe_msg = {
-                    "type": "subscribe",
-                    "symbol": symbol,
-                    "channel": "ticker"  # Can be extended for funding, orderbook, etc.
+                    "subscribe": f"{symbol.upper()}/ticker"
                 }
                 await self.websocket.send(json.dumps(subscribe_msg))
-                logger.info(f"Subscribed to {symbol}")
+                logger.info(f"Subscribed to {symbol} with format 1")
+                
+                # Wait a moment and try format 2 if needed
+                await asyncio.sleep(1)
+                subscribe_msg2 = {
+                    "method": "SUBSCRIBE",
+                    "params": [f"{symbol.lower()}@ticker"],
+                    "id": 1
+                }
+                await self.websocket.send(json.dumps(subscribe_msg2))
+                logger.info(f"Subscribed to {symbol} with format 2")
                 
         except Exception as e:
             logger.error(f"Failed to connect to Hyperliquid: {e}")
@@ -48,7 +58,9 @@ class HyperliquidWebSocket:
         while self.running:
             try:
                 message = await self.websocket.recv()
+                logger.debug(f"Raw message: {message}")
                 data = json.loads(message)
+                logger.info(f"Processed data: {data}")
                 await self.callback(data)
                 
             except ConnectionClosed:
@@ -91,6 +103,40 @@ async def hyperliquid_ws_listener(symbols: List[str], callback: Callable):
     client = HyperliquidWebSocket(symbols, callback)
     await client.connect()
     await client.listen()
+
+async def mock_hyperliquid_ws_listener(symbols: List[str], callback: Callable):
+    """
+    Mock Hyperliquid WebSocket listener for testing.
+    Simulates live price data without requiring actual API connection.
+    """
+    import random
+    import time
+    
+    logger.info(f"Mock WebSocket: Starting for symbols {symbols}")
+    print(f"[Mock] Starting WebSocket for {symbols}")
+    
+    # Generate realistic price movements
+    base_price = 42000
+    for i in range(25):  # Generate 25 ticks
+        # Simulate price movement with some randomness
+        price_change = random.uniform(-100, 100)
+        base_price += price_change
+        price = round(base_price, 2)
+        
+        # Create mock ticker data
+        mock_data = {
+            "channel": "ticker",
+            "symbol": symbols[0],
+            "price": price,
+            "timestamp": int(time.time() * 1000)
+        }
+        
+        print(f"[Mock] Tick {i+1}: ${price}")
+        await callback(mock_data)
+        await asyncio.sleep(0.5)  # Simulate tick frequency
+    
+    print("[Mock] WebSocket completed")
+    logger.info("Mock WebSocket: Completed")
 
 # Example usage and data processing
 async def process_hyperliquid_data(data: Dict):

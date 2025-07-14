@@ -16,6 +16,7 @@ DEFAULT_CONFIG = {
     # Debate and discussion settings
     "max_debate_rounds": 1,
     "max_risk_discuss_rounds": 1,
+    "live_timeout": 30,  # seconds before falling back to mock prices
     "max_recur_limit": 100,
     # Tool settings
     "online_tools": True,

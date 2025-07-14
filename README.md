@@ -12,6 +12,16 @@ poetry install  # Python 3.11+
 poetry run python -m tradingagents run-demo --symbol BTCUSD
 ```
 
+### Live mode
+
+Run with `--live` to connect to a real WebSocket feed.
+
+```bash
+poetry run python -m tradingagents run-demo --symbol BTCUSD --live
+```
+
+*Current status*: falls back to a high‑fidelity mock after 30 s while we finish Hyperliquid integration.
+
 Example output
 
 ```json
