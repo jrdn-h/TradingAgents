@@ -8,6 +8,7 @@ from tradingagents.agents.analysts.sentiment_analyst import SentimentAnalyst
 from tradingagents.agents.analysts.technical_analyst import TechnicalAnalyst
 from tradingagents.agents.trader.trader import TraderAgent
 from tradingagents.agents.managers.risk_manager import RiskManager
+import matplotlib.pyplot as plt
 
 def load_candles(symbol, start, end, csv_path=None):
     if csv_path:
@@ -32,7 +33,18 @@ def load_candles(symbol, start, end, csv_path=None):
         df["Datetime"] = pd.to_datetime(df.index)
     return df
 
-async def run_backtest(df, symbol):
+def save_equity_plot(equity_series, out_path):
+    import os
+    os.makedirs(os.path.dirname(out_path), exist_ok=True)
+    fig, ax = plt.subplots()
+    equity_series.plot(ax=ax)
+    ax.set_title("Equity Curve")
+    ax.set_xlabel("Time")
+    ax.set_ylabel("USD")
+    fig.savefig(out_path, bbox_inches="tight")
+    plt.close(fig)
+
+async def run_backtest(df, symbol, plot=False):
     sentiment = SentimentAnalyst()
     technical = TechnicalAnalyst()
     trader = TraderAgent()
@@ -80,6 +92,11 @@ async def run_backtest(df, symbol):
     # Write trades
     trades_df = pd.DataFrame(trade_log)
     trades_df.to_csv('trades.csv', index=False)
+    # Plot if requested
+    if plot:
+        out_path = f'reports/equity_{symbol.replace("-", "").replace("/", "")}.png'
+        save_equity_plot(pnl, out_path)
+        print(f"  Equity curve saved to {out_path}")
     # Print metrics
     print("\nBacktest Results:")
     print(f"  Start equity: $10000.00")
@@ -98,4 +115,4 @@ if __name__ == '__main__':
     parser.add_argument('--plot', action='store_true')
     args = parser.parse_args()
     df = load_candles(args.symbol, args.start, args.end, args.csv_path)
-    asyncio.run(run_backtest(df, args.symbol)) 
+    asyncio.run(run_backtest(df, args.symbol, plot=args.plot)) 

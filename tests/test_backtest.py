@@ -28,6 +28,18 @@ async def test_run_backtest_smoke(monkeypatch, fixture_df):
         # Acceptable: no trades generated on this dataset
         pass
 
+@pytest.mark.asyncio
+def test_run_backtest_plot(monkeypatch, fixture_df):
+    # Patch yfinance to never be called
+    monkeypatch.setitem(sys.modules, 'yfinance', None)
+    # Remove old plot if exists
+    out_path = 'reports/equity_BTCUSD.png'
+    if os.path.exists(out_path):
+        os.remove(out_path)
+    # Run backtest with plot
+    asyncio.run(run_backtest(fixture_df, 'BTC-USD', plot=True))
+    assert os.path.exists(out_path)
+
 def test_load_candles_csv():
     df = load_candles('BTC-USD', '2024-01-01', '2024-01-02', FIXTURE)
     assert not df.empty
@@ -40,7 +52,10 @@ def test_cli_backtest(tmp_path):
     result = subprocess.run([
         sys.executable, '-m', 'tradingagents.backtest.runner',
         '--from', '2024-01-01', '--to', '2024-01-02',
-        '--symbol', 'BTC-USD', '--csv', test_csv
+        '--symbol', 'BTC-USD', '--csv', test_csv, '--plot'
     ], capture_output=True)
     assert result.returncode == 0
-    assert b'Backtest Results' in result.stdout or b'Backtest Results' in result.stderr 
+    assert b'Backtest Results' in result.stdout or b'Backtest Results' in result.stderr
+    # Check plot file
+    out_path = 'reports/equity_BTCUSD.png'
+    assert os.path.exists(out_path) 
