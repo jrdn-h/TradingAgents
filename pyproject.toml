@@ -1,34 +1,36 @@
-[project]
+[tool.poetry]
 name = "tradingagents"
 version = "0.1.0"
-description = "Add your description here"
+description = "LLM-driven multi-agent trading platform"
+authors = ["Your Name <you@example.com>"]
+license = "MIT"
 readme = "README.md"
-requires-python = ">=3.10"
-dependencies = [
-    "akshare>=1.16.98",
-    "backtrader>=1.9.78.123",
-    "chainlit>=2.5.5",
-    "chromadb>=1.0.12",
-    "eodhd>=1.0.32",
-    "feedparser>=6.0.11",
-    "finnhub-python>=2.4.23",
-    "langchain-anthropic>=0.3.15",
-    "langchain-experimental>=0.3.4",
-    "langchain-google-genai>=2.1.5",
-    "langchain-openai>=0.3.23",
-    "langgraph>=0.4.8",
-    "pandas>=2.3.0",
-    "parsel>=1.10.0",
-    "praw>=7.8.1",
-    "pytz>=2025.2",
-    "questionary>=2.1.0",
-    "redis>=6.2.0",
-    "requests>=2.32.4",
-    "rich>=14.0.0",
-    "setuptools>=80.9.0",
-    "stockstats>=0.6.5",
-    "tqdm>=4.67.1",
-    "tushare>=1.4.21",
-    "typing-extensions>=4.14.0",
-    "yfinance>=0.2.63",
-]
+packages = [{include = "tradingagents"}]
+
+[tool.poetry.dependencies]
+python = "^3.11"
+langchain = "^0.3.26"
+langchain-openai = "^0.3.27"
+langgraph = "^0.5.3"
+openai = "^1.30.1"
+pandas = "^2.2.2"
+numpy = "^1.26.4"
+websockets = "==11.0.3"  # 12.x removed websockets.asyncio – yfinance still needs it (2025-07-14)
+httpx = "^0.27.0"
+redis = "^5.0.4"
+fastapi = "^0.111.0"
+psycopg2 = "^2.9.9"
+uvicorn = "^0.29.0"
+python-dotenv = "^1.0.1"
+asyncio = "^3.4.3"
+feedparser = "^6.0.11"
+pandas_ta = "^0.3.14b0"
+yfinance = "^0.2.38"
+
+[tool.poetry.group.dev.dependencies]
+pytest = "^8.0.0"
+pytest-asyncio = "^0.24.0"
+
+[build-system]
+requires = ["poetry-core>=1.0.0"]
+build-backend = "poetry.core.masonry.api"

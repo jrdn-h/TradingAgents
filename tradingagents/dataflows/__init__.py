@@ -1,46 +1,40 @@
-from .finnhub_utils import get_data_in_range
-from .googlenews_utils import getNewsData
-from .yfin_utils import YFinanceUtils
-from .reddit_utils import fetch_top_from_category
-from .stockstats_utils import StockstatsUtils
-from .yfin_utils import YFinanceUtils
+"""
+Light-weight package init.
 
-from .interface import (
-    # News and sentiment functions
-    get_finnhub_news,
-    get_finnhub_company_insider_sentiment,
-    get_finnhub_company_insider_transactions,
-    get_google_news,
-    get_reddit_global_news,
-    get_reddit_company_news,
-    # Financial statements functions
-    get_simfin_balance_sheet,
-    get_simfin_cashflow,
-    get_simfin_income_statements,
-    # Technical analysis functions
-    get_stock_stats_indicators_window,
-    get_stockstats_indicator,
-    # Market data functions
-    get_YFin_data_window,
-    get_YFin_data,
-)
+Only import modules whose dependencies are known to be present.
+Heavier feeds (e.g. ones that transitively require yfinance or
+other optional libraries) are lazily imported on first use.
 
-__all__ = [
-    # News and sentiment functions
-    "get_finnhub_news",
-    "get_finnhub_company_insider_sentiment",
-    "get_finnhub_company_insider_transactions",
-    "get_google_news",
-    "get_reddit_global_news",
-    "get_reddit_company_news",
-    # Financial statements functions
-    "get_simfin_balance_sheet",
-    "get_simfin_cashflow",
-    "get_simfin_income_statements",
-    # Technical analysis functions
-    "get_stock_stats_indicators_window",
-    "get_stockstats_indicator",
-    # Market data functions
-    "get_YFin_data_window",
-    "get_YFin_data",
-]
+This keeps `import tradingagents.dataflows` cheap so the
+orchestrator CLI can run even in minimal environments.
+"""
+
+from importlib import import_module
+import logging
+
+logger = logging.getLogger(__name__)
+
+__all__ = []
+
+# Feeds that rely *only* on stdlib or already-installed deps
+for _mod in ("hyperliquid_utils",):
+    try:
+        m = import_module(f".{_mod}", package=__name__)
+        globals()[_mod] = m
+        __all__.append(_mod)
+    except Exception as err:  # pragma: no cover
+        logger.warning("Failed to import %s: %s", _mod, err)
+
+# Optional feeds — import on demand
+def __getattr__(name: str):
+    """Lazy-load optional dataflow modules."""
+    if name in {"twitter_utils", "news_utils", "whale_alert_utils"}:
+        try:
+            m = import_module(f".{name}", package=__name__)
+            globals()[name] = m
+            return m
+        except ModuleNotFoundError as err:
+            raise AttributeError(
+                f"Module '{name}' requires optional dependencies: {err}"
+            ) from err
+    raise AttributeError(name)
