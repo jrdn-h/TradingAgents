@@ -1,0 +1,40 @@
+name: CI
+
+on:
+  push:
+    branches: [ main ]
+  pull_request:
+    branches: [ main ]
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+
+      - name: Install Poetry
+        run: |
+          pip install poetry==1.8.3
+
+      - name: Install deps
+        run: poetry install --no-interaction
+
+      - name: Run unit tests
+        run: poetry run pytest -q
+
+      - name: Smoke‑test demo
+        timeout-minutes: 1
+        run: |
+          poetry run python -m tradingagents run-demo --symbol BTCUSD 
+
+      - name: Print badge markdown
+        if: success()
+        run: |
+          echo "\nCopy this badge to your README.md (replace <org>/<repo> with your repo path):"
+          echo "[![CI](https://github.com/<org>/<repo>/actions/workflows/ci.yml/badge.svg)](https://github.com/<org>/<repo>/actions/workflows/ci.yml)" 
