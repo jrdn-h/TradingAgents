@@ -47,11 +47,37 @@ Market Node – (currently mocked) streams prices into a 20‑tick deque.
 
 TechnicalAnalyst – computes SMA/EMA crossover and sets breakout.
 
-SentimentAnalyst – stub that scores tweets/news (hard‑coded 78).
+SentimentAnalyst – scores tweets/news using embeddings or keyword heuristics.
 
 TraderAgent – goes long if breakout && sentiment>60.
 
 RiskManager – caps size at 2 % and vetoes oversize trades.
+
+### Sentiment scoring
+
+`SentimentAnalyst` now supports two paths:
+
+| Path | When used | How it works |
+|------|-----------|--------------|
+| **OpenAI embeddings** | `OPENAI_API_KEY` present in the environment | The tweet text is embedded via `openai.embeddings.create`, compared (cos θ) to bullish/bearish exemplar vectors, and mapped to a 0‑100 score. |
+| **Heuristic fallback** | No API key or embedding request fails | Keyword + emoji lookup (`🚀`, `moon`, `rekt`, etc.) with weighted counts produces a quick score. |
+
+> **Tip:** try  
+> ```bash
+> poetry run python - <<'PY'
+> from tradingagents.agents.analysts.sentiment_analyst import SentimentAnalyst
+> import asyncio, os
+>
+> async def main():
+>     agent = SentimentAnalyst()
+>     state = {"tweets": [{"text": "🚀 $BTC to the moon!"}]}
+>     result = await agent.run(state)
+>     print(result)
+>
+> asyncio.run(main())
+> PY
+> ```  
+> and watch the score jump above 60.
 
 ## Roadmap
 Swap in live Hyperliquid WebSocket feed.
