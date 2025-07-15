@@ -29,7 +29,7 @@ async def test_run_backtest_smoke(monkeypatch, fixture_df):
         pass
 
 @pytest.mark.asyncio
-def test_run_backtest_plot(monkeypatch, fixture_df):
+async def test_run_backtest_plot(monkeypatch, fixture_df):
     # Patch yfinance to never be called
     monkeypatch.setitem(sys.modules, 'yfinance', None)
     # Remove old plot if exists
@@ -37,7 +37,7 @@ def test_run_backtest_plot(monkeypatch, fixture_df):
     if os.path.exists(out_path):
         os.remove(out_path)
     # Run backtest with plot
-    asyncio.run(run_backtest(fixture_df, 'BTC-USD', plot=True))
+    await run_backtest(fixture_df, 'BTC-USD', plot=True)
     assert os.path.exists(out_path)
 
 def test_load_candles_csv():

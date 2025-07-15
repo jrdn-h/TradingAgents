@@ -9,15 +9,16 @@ import matplotlib.pyplot as plt
 import os
 
 from tradingagents.graph.orchestrator import Orchestrator
+from tradingagents.config import setup_logging
 
 def run_demo(symbol: str, log_level: str = "INFO", live: bool = False):
-    logging.basicConfig(level=getattr(logging, log_level.upper(), logging.INFO), format="%(asctime)s %(levelname)s %(message)s")
+    setup_logging(log_level)
     orchestrator = Orchestrator()
     orchestrator.run(symbol=symbol, live=live)
 
 def run_replay(start_date: str, end_date: str, symbol: str, tweets_csv: str = None, plot: bool = False):
     """Run historical replay with sentiment correlation analysis."""
-    logging.basicConfig(level=logging.INFO, format="%(asctime)s %(levelname)s %(message)s")
+    setup_logging()
     logger = logging.getLogger(__name__)
     
     logger.info(f"🔄 Starting historical replay: {symbol} from {start_date} to {end_date}")
@@ -73,7 +74,7 @@ def main():
         run_demo(args.symbol, args.log_level, getattr(args, "live", False))
     elif args.command == "dashboard":
         import uvicorn
-        from api import app
+        from dashboard.main import app
         uvicorn.run(app, host=args.host, port=args.port)
     elif args.command == "replay":
         run_replay(

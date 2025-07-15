@@ -1,27 +1,34 @@
-from langchain_core.prompts import ChatPromptTemplate, MessagesPlaceholder
-import time
-import json
+from .base_analyst import AnalystAgent
+from ..utils.agent_utils import Toolkit
+from typing import List, Any
 
+class MarketAnalyst(AnalystAgent):
+    """
+    An analyst agent that specializes in market analysis.
+    """
+    def __init__(self, llm, toolkit: Toolkit):
+        super().__init__("market_analyst", llm, toolkit)
 
-def create_market_analyst(llm, toolkit):
-
-    def market_analyst_node(state):
-        current_date = state["trade_date"]
-        ticker = state["company_of_interest"]
-        company_name = state["company_of_interest"]
-
-        if toolkit.config["online_tools"]:
-            tools = [
-                toolkit.get_YFin_data_online,
-                toolkit.get_stockstats_indicators_report_online,
+    def get_tools(self) -> List[Any]:
+        """
+        Returns the list of tools for the agent.
+        """
+        if self.toolkit.config["online_tools"]:
+            return [
+                self.toolkit.get_YFin_data_online,
+                self.toolkit.get_stockstats_indicators_report_online,
             ]
         else:
-            tools = [
-                toolkit.get_YFin_data,
-                toolkit.get_stockstats_indicators_report,
+            return [
+                self.toolkit.get_YFin_data,
+                self.toolkit.get_stockstats_indicators_report,
             ]
 
-        system_message = (
+    def get_system_message(self) -> str:
+        """
+        Returns the system message for the agent's prompt.
+        """
+        return (
             """You are a trading assistant tasked with analyzing financial markets. Your role is to select the **most relevant indicators** for a given market condition or trading strategy from the following list. The goal is to choose up to **8 indicators** that provide complementary insights without redundancy. Categories and each category's indicators are:
 
 Moving Averages:
@@ -50,40 +57,16 @@ Volume-Based Indicators:
             + """ Make sure to append a Markdown table at the end of the report to organize key points in the report, organized and easy to read."""
         )
 
-        prompt = ChatPromptTemplate.from_messages(
-            [
-                (
-                    "system",
-                    "You are a helpful AI assistant, collaborating with other assistants."
-                    " Use the provided tools to progress towards answering the question."
-                    " If you are unable to fully answer, that's OK; another assistant with different tools"
-                    " will help where you left off. Execute what you can to make progress."
-                    " If you or any other assistant has the FINAL TRANSACTION PROPOSAL: **BUY/HOLD/SELL** or deliverable,"
-                    " prefix your response with FINAL TRANSACTION PROPOSAL: **BUY/HOLD/SELL** so the team knows to stop."
-                    " You have access to the following tools: {tool_names}.\n{system_message}"
-                    "For your reference, the current date is {current_date}. The company we want to look at is {ticker}",
-                ),
-                MessagesPlaceholder(variable_name="messages"),
-            ]
-        )
-
-        prompt = prompt.partial(system_message=system_message)
-        prompt = prompt.partial(tool_names=", ".join([tool.name for tool in tools]))
-        prompt = prompt.partial(current_date=current_date)
-        prompt = prompt.partial(ticker=ticker)
-
-        chain = prompt | llm.bind_tools(tools)
-
-        result = chain.invoke(state["messages"])
-
-        report = ""
-
-        if len(result.tool_calls) == 0:
-            report = result.content
-       
-        return {
-            "messages": [result],
-            "market_report": report,
-        }
-
-    return market_analyst_node
+async def market_analyst_node(state):
+    # This is a temporary adapter to make the new class-based agent work with the old graph setup.
+    from tradingagents.graph.trading_graph import TradingAgentsGraph  # Local import to avoid circular dependency
+    
+    graph = TradingAgentsGraph() 
+    agent = MarketAnalyst(graph.deep_thinking_llm, graph.toolkit)
+    
+    result = await agent.run(state)
+    
+    return {
+        "messages": result["messages"],
+        "market_report": result["report"],
+    }

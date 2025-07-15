@@ -4,14 +4,22 @@ Unit tests for market functionality and live feed integration.
 
 import pytest
 import asyncio
-from unittest.mock import AsyncMock
-from tradingagents.graph.orchestrator import Orchestrator
+from unittest.mock import AsyncMock, patch
 from tradingagents.dataflows import hyperliquid_utils
+from tradingagents.graph.orchestrator import Orchestrator
+
+@pytest.fixture
+def mock_sentiment_model():
+    """Fixture to patch the SentimentModel to avoid network calls."""
+    with patch('tradingagents.sentiment.model.SentimentModel') as mock:
+        instance = mock.return_value
+        instance.score.return_value = type('SentimentResult', (), {'score': 0.5})
+        yield mock
 
 @pytest.mark.asyncio
-async def test_market_live_patch(monkeypatch):
+async def test_market_live_patch(monkeypatch, mock_sentiment_model):
     """Test that live mode works with mocked WebSocket feed."""
-    
+
     # Create a mock async generator that yields ascending prices
     async def fake_feed(symbols, callback):
         for i, price in enumerate(range(40000, 40025)):
@@ -23,14 +31,14 @@ async def test_market_live_patch(monkeypatch):
             }
             await callback(mock_data)
             await asyncio.sleep(0.1)  # Simulate tick frequency
-    
+
     # Patch the mock WebSocket function
     monkeypatch.setattr(hyperliquid_utils, "mock_hyperliquid_ws_listener", fake_feed)
-    
+
     # Run the orchestrator in live mode
     orchestrator = Orchestrator()
     await orchestrator.run_once(symbol="BTCUSD", live=True)
-    
+
     # The test passes if no exceptions are raised and the function completes
     # The orchestrator will print the results, but we're testing the integration works
 

@@ -158,9 +158,9 @@ To use TradingAgents inside your code, you can import the `tradingagents` module
 
 ```python
 from tradingagents.graph.trading_graph import TradingAgentsGraph
-from tradingagents.default_config import DEFAULT_CONFIG
+from tradingagents.config import settings
 
-ta = TradingAgentsGraph(debug=True, config=DEFAULT_CONFIG.copy())
+ta = TradingAgentsGraph(debug=True, config=settings.model_dump())
 
 # forward propagate
 _, decision = ta.propagate("NVDA", "2024-05-10")
@@ -171,10 +171,10 @@ You can also adjust the default configuration to set your own choice of LLMs, de
 
 ```python
 from tradingagents.graph.trading_graph import TradingAgentsGraph
-from tradingagents.default_config import DEFAULT_CONFIG
+from tradingagents.config import settings
 
 # Create a custom config
-config = DEFAULT_CONFIG.copy()
+config = settings.model_dump()
 config["deep_think_llm"] = "gpt-4.1-nano"  # Use a different model
 config["quick_think_llm"] = "gpt-4.1-nano"  # Use a different model
 config["max_debate_rounds"] = 1  # Increase debate rounds

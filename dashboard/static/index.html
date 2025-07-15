@@ -1,0 +1,99 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>TradingAgents Dashboard</title>
+    <link rel="stylesheet" href="/static/styles.css">
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>🤖 TradingAgents Dashboard</h1>
+        </div>
+        
+        <div class="status-bar">
+            <div>
+                <strong>Symbol:</strong> <span id="symbol">-</span> | 
+                <strong>Ticks:</strong> <span id="tick-count">0</span> | 
+                <strong>Last Update:</strong> <span id="last-update">-</span>
+            </div>
+            <div class="status-indicator" id="status-indicator">Idle</div>
+        </div>
+        
+        <div class="content">
+            <div class="card">
+                <h3>💰 Current Price</h3>
+                <div class="price" id="current-price">$0.00</div>
+            </div>
+            
+            <div class="card">
+                <h3>📊 Technical Indicators</h3>
+                <div class="metric">
+                    <span class="metric-label">SMA:</span>
+                    <span class="metric-value" id="sma">-</span>
+                </div>
+                <div class="metric">
+                    <span class="metric-label">EMA:</span>
+                    <span class="metric-value" id="ema">-</span>
+                </div>
+                <div class="metric">
+                    <span class="metric-label">Breakout:</span>
+                    <span class="metric-value" id="breakout">-</span>
+                </div>
+            </div>
+            
+            <div class="card">
+                <h3>😊 Sentiment Index</h3>
+                <div class="sentiment-gauge">
+                    <svg width="120" height="60" viewBox="0 0 120 60">
+                        <defs>
+                            <linearGradient id="gaugeGradient" x1="0%" y1="0%" x2="100%" y2="0%">
+                                <stop offset="0%" style="stop-color:#e74c3c"/>
+                                <stop offset="50%" style="stop-color:#95a5a6"/>
+                                <stop offset="100%" style="stop-color:#27ae60"/>
+                            </linearGradient>
+                        </defs>
+                        <path d="M 10 50 A 40 40 0 0 1 110 50" stroke="url(#gaugeGradient)" stroke-width="8" fill="none"/>
+                        <circle id="gauge-needle" cx="60" cy="50" r="4" fill="#2c3e50"/>
+                    </svg>
+                    <div id="sentiment-score" class="sentiment-score">0.00</div>
+                </div>
+            </div>
+            
+            <div class="card">
+                <h3>🐦 Tweet Feed</h3>
+                <div id="tweet-feed" class="tweet-feed">
+                    <div class="tweet-placeholder">No tweets yet...</div>
+                </div>
+            </div>
+            
+            <div class="card">
+                <h3>🎯 Trade Decision</h3>
+                <div id="trade-decision">-</div>
+            </div>
+            
+            <div class="card">
+                <h3>🛡️ Risk Approval</h3>
+                <div id="risk-approval">-</div>
+            </div>
+            
+            <div class="card">
+                <h3>📈 Equity Curve</h3>
+                <div class="chart-container" id="equity-chart">
+                    <canvas id="equity-canvas"></canvas>
+                </div>
+            </div>
+        </div>
+        
+        <div id="errors"></div>
+    </div>
+    
+    <div class="auto-refresh">
+        Live SSE stream (500ms updates)
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="/static/scripts.js"></script>
+</body>
+</html> 

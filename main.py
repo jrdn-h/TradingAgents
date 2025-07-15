@@ -1,6 +1,5 @@
 from fastapi import FastAPI
 from tradingagents.graph.trading_graph import TradingAgentsGraph
-from tradingagents.default_config import DEFAULT_CONFIG
 
 # --- FastAPI app expected by `uvicorn main:app` ---
 app = FastAPI(title="TradingAgents API")

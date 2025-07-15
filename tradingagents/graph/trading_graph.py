@@ -31,17 +31,8 @@ except ImportError:
 from langgraph.prebuilt import ToolNode
 
 from tradingagents.agents import *
-from tradingagents.default_config import DEFAULT_CONFIG
-
-# Optional dependency guard: https://stackoverflow.com/q/77512072
-try:
-    from tradingagents.agents.utils.memory import FinancialSituationMemory
-    MEMORY_AVAILABLE = True
-except ImportError:
-    FinancialSituationMemory = None
-    MEMORY_AVAILABLE = False
-    print("[WARN] FinancialSituationMemory unavailable (chromadb not installed)")
-
+from tradingagents.config import settings
+from tradingagents.agents.utils.memory import FinancialSituationMemory
 from tradingagents.agents.utils.agent_states import (
     AgentState,
     InvestDebateState,
@@ -54,6 +45,7 @@ from .setup import GraphSetup
 from .propagation import Propagator
 from .reflection import Reflector
 from .signal_processing import SignalProcessor
+from ..agents.utils.agent_utils import Toolkit
 
 
 class TradingAgentsGraph:
@@ -65,72 +57,77 @@ class TradingAgentsGraph:
         debug=False,
         config: Dict[str, Any] = None,
     ):
-        """Initialize the trading agents graph and components.
-
-        Args:
-            selected_analysts: List of analyst types to include
-            debug: Whether to run in debug mode
-            config: Configuration dictionary. If None, uses default config
-        """
+        """Initialize the trading agents graph and components."""
         self.debug = debug
-        self.config = config or DEFAULT_CONFIG
-
-        # Update the interface's config
+        self.config = config or settings.model_dump()
         set_config(self.config)
 
-        # Create necessary directories
+        self._create_directories()
+        self._initialize_llms()
+        self.toolkit = Toolkit(config=self.config)
+        self._initialize_memories()
+        self._initialize_components(selected_analysts)
+
+        # State tracking
+        self.curr_state = None
+        self.ticker = None
+        self.log_states_dict = {}  # date to full state dict
+
+    def _create_directories(self):
+        """Create necessary directories."""
         os.makedirs(
             os.path.join(self.config["project_dir"], "dataflows/data_cache"),
             exist_ok=True,
         )
 
-        # Initialize LLMs
-        provider = self.config["llm_provider"].lower()
-        if provider in ("openai", "ollama", "openrouter"):
+    def _llm_factory(self, provider: str) -> Any:
+        """A factory for creating LLM clients."""
+        if provider == "openai" or provider == "ollama" or provider == "openrouter":
             if ChatOpenAI is None:
                 raise ImportError("OpenAI LLM provider selected but langchain_openai is not installed.")
-            self.deep_thinking_llm = ChatOpenAI(model=self.config["deep_think_llm"], base_url=self.config["backend_url"])
-            self.quick_thinking_llm = ChatOpenAI(model=self.config["quick_think_llm"], base_url=self.config["backend_url"])
+            return ChatOpenAI
         elif provider == "anthropic":
             if ChatAnthropic is None:
                 raise ImportError("Anthropic LLM provider selected but langchain_anthropic is not installed.")
-            self.deep_thinking_llm = ChatAnthropic(model=self.config["deep_think_llm"], base_url=self.config["backend_url"])
-            self.quick_thinking_llm = ChatAnthropic(model=self.config["quick_think_llm"], base_url=self.config["backend_url"])
+            return ChatAnthropic
         elif provider == "google":
             if ChatGoogleGenerativeAI is None:
                 raise ImportError("Google LLM provider selected but langchain_google_genai is not installed.")
-            self.deep_thinking_llm = ChatGoogleGenerativeAI(model=self.config["deep_think_llm"])
-            self.quick_thinking_llm = ChatGoogleGenerativeAI(model=self.config["quick_think_llm"])
+            return ChatGoogleGenerativeAI
         else:
-            raise ValueError(f"Unsupported LLM provider: {self.config['llm_provider']}")
-        
-        self.toolkit = Toolkit(config=self.config)
+            raise ValueError(f"Unsupported LLM provider: {provider}")
 
-        # Initialize memories
-        if MEMORY_AVAILABLE:
-            self.bull_memory = FinancialSituationMemory("bull_memory", self.config)
-            self.bear_memory = FinancialSituationMemory("bear_memory", self.config)
-            self.trader_memory = FinancialSituationMemory("trader_memory", self.config)
-            self.invest_judge_memory = FinancialSituationMemory("invest_judge_memory", self.config)
-            self.risk_manager_memory = FinancialSituationMemory("risk_manager_memory", self.config)
+    def _initialize_llms(self):
+        """Initialize the language models."""
+        provider = self.config["llm_provider"].lower()
+        llm_class = self._llm_factory(provider)
+        
+        llm_kwargs = {}
+        if self.config.get("backend_url"):
+            llm_kwargs["base_url"] = self.config["backend_url"]
+
+        self.deep_thinking_llm = llm_class(model=self.config["deep_think_llm"], **llm_kwargs)
+        self.quick_thinking_llm = llm_class(model=self.config["quick_think_llm"], **llm_kwargs)
+
+    def _initialize_memories(self):
+        """Initialize the agent memories."""
+        self.bull_memory = self.bear_memory = self.trader_memory = self.invest_judge_memory = self.risk_manager_memory = None
+        if FinancialSituationMemory is not None:
+            memory_names = ["bull", "bear", "trader", "invest_judge", "risk_manager"]
+            for name in memory_names:
+                setattr(self, f"{name}_memory", FinancialSituationMemory(f"{name}_memory", self.config))
         else:
             print("[WARN] Memory features disabled - chromadb not installed")
-            self.bull_memory = None
-            self.bear_memory = None
-            self.trader_memory = None
-            self.invest_judge_memory = None
-            self.risk_manager_memory = None
 
-        # Create tool nodes
-        self.tool_nodes = self._create_tool_nodes()
-
-        # Initialize components
+    def _initialize_components(self, selected_analysts):
+        """Initialize the graph components."""
+        tool_nodes = self._create_tool_nodes()
         self.conditional_logic = ConditionalLogic()
         self.graph_setup = GraphSetup(
             self.quick_thinking_llm,
             self.deep_thinking_llm,
             self.toolkit,
-            self.tool_nodes,
+            tool_nodes,
             self.bull_memory,
             self.bear_memory,
             self.trader_memory,
@@ -138,17 +135,9 @@ class TradingAgentsGraph:
             self.risk_manager_memory,
             self.conditional_logic,
         )
-
         self.propagator = Propagator()
         self.reflector = Reflector(self.quick_thinking_llm)
         self.signal_processor = SignalProcessor(self.quick_thinking_llm)
-
-        # State tracking
-        self.curr_state = None
-        self.ticker = None
-        self.log_states_dict = {}  # date to full state dict
-
-        # Set up the graph
         self.graph = self.graph_setup.setup_graph(selected_analysts)
 
     def _create_tool_nodes(self) -> Dict[str, ToolNode]:

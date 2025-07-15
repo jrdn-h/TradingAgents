@@ -3,9 +3,7 @@ from abc import ABC, abstractmethod
 from datetime import datetime
 from pydantic import BaseModel
 import logging
-
-from tradingagents.backtest.metrics import backoffs_total_counter
-logger = logging.getLogger("TwikitSource")
+logger = logging.getLogger(__name__)
 
 # --- Tweet and SentimentResult Schemas ---
 class Tweet(BaseModel):

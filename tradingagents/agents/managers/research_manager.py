@@ -1,9 +1,14 @@
 import time
 import json
 
+from ..base_agent import BaseAgent
 
-def create_research_manager(llm, memory):
-    def research_manager_node(state) -> dict:
+class ResearchManager(BaseAgent):
+    def __init__(self, llm, memory):
+        super().__init__("research_manager", llm)
+        self.memory = memory
+
+    async def run(self, state) -> dict:
         history = state["investment_debate_state"].get("history", "")
         market_research_report = state["market_report"]
         sentiment_report = state["sentiment_report"]
@@ -13,7 +18,7 @@ def create_research_manager(llm, memory):
         investment_debate_state = state["investment_debate_state"]
 
         curr_situation = f"{market_research_report}\n\n{sentiment_report}\n\n{news_report}\n\n{fundamentals_report}"
-        past_memories = memory.get_memories(curr_situation, n_matches=2)
+        past_memories = self.memory.get_memories(curr_situation, n_matches=2)
 
         past_memory_str = ""
         for i, rec in enumerate(past_memories, 1):
@@ -36,7 +41,7 @@ Here are your past reflections on mistakes:
 Here is the debate:
 Debate History:
 {history}"""
-        response = llm.invoke(prompt)
+        response = self.llm.invoke(prompt)
 
         new_investment_debate_state = {
             "judge_decision": response.content,
@@ -51,5 +56,3 @@ Debate History:
             "investment_debate_state": new_investment_debate_state,
             "investment_plan": response.content,
         }
-
-    return research_manager_node

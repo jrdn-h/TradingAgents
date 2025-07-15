@@ -1,9 +1,13 @@
 import time
 import json
 
+from ..base_agent import BaseAgent
 
-def create_neutral_debator(llm):
-    def neutral_node(state) -> dict:
+class NeutralDebator(BaseAgent):
+    def __init__(self, llm):
+        super().__init__("neutral_debator", llm)
+
+    async def run(self, state) -> dict:
         risk_debate_state = state["risk_debate_state"]
         history = risk_debate_state.get("history", "")
         neutral_history = risk_debate_state.get("neutral_history", "")
@@ -32,7 +36,7 @@ Here is the current conversation history: {history} Here is the last response fr
 
 Engage actively by analyzing both sides critically, addressing weaknesses in the risky and conservative arguments to advocate for a more balanced approach. Challenge each of their points to illustrate why a moderate risk strategy might offer the best of both worlds, providing growth potential while safeguarding against extreme volatility. Focus on debating rather than simply presenting data, aiming to show that a balanced view can lead to the most reliable outcomes. Output conversationally as if you are speaking without any special formatting."""
 
-        response = llm.invoke(prompt)
+        response = self.llm.invoke(prompt)
 
         argument = f"Neutral Analyst: {response.content}"
 
@@ -51,5 +55,3 @@ Engage actively by analyzing both sides critically, addressing weaknesses in the
         }
 
         return {"risk_debate_state": new_risk_debate_state}
-
-    return neutral_node

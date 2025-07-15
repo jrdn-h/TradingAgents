@@ -1,10 +1,15 @@
 from langchain_core.messages import AIMessage
 import time
 import json
+from ..base_agent import BaseAgent
 
 
-def create_bear_researcher(llm, memory):
-    def bear_node(state) -> dict:
+class BearResearcher(BaseAgent):
+    def __init__(self, llm, memory):
+        super().__init__("bear_researcher", llm)
+        self.memory = memory
+
+    async def run(self, state) -> dict:
         investment_debate_state = state["investment_debate_state"]
         history = investment_debate_state.get("history", "")
         bear_history = investment_debate_state.get("bear_history", "")
@@ -16,7 +21,7 @@ def create_bear_researcher(llm, memory):
         fundamentals_report = state["fundamentals_report"]
 
         curr_situation = f"{market_research_report}\n\n{sentiment_report}\n\n{news_report}\n\n{fundamentals_report}"
-        past_memories = memory.get_memories(curr_situation, n_matches=2)
+        past_memories = self.memory.get_memories(curr_situation, n_matches=2)
 
         past_memory_str = ""
         for i, rec in enumerate(past_memories, 1):
@@ -44,7 +49,7 @@ Reflections from similar situations and lessons learned: {past_memory_str}
 Use this information to deliver a compelling bear argument, refute the bull's claims, and engage in a dynamic debate that demonstrates the risks and weaknesses of investing in the stock. You must also address reflections and learn from lessons and mistakes you made in the past.
 """
 
-        response = llm.invoke(prompt)
+        response = self.llm.invoke(prompt)
 
         argument = f"Bear Analyst: {response.content}"
 
@@ -57,5 +62,3 @@ Use this information to deliver a compelling bear argument, refute the bull's cl
         }
 
         return {"investment_debate_state": new_investment_debate_state}
-
-    return bear_node

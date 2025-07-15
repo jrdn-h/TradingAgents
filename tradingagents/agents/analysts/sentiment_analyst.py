@@ -8,9 +8,7 @@ import re
 import math
 from typing import Dict, Any, List
 from ..base_agent import BaseAgent
-from langchain_core.pydantic_v1 import BaseModel, Field
 from typing import List
-from ...sentiment.model import Sentiment
 
 # Optional dependency guard: https://stackoverflow.com/q/77512072
 try:

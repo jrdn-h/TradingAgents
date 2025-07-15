@@ -1,10 +1,11 @@
 from langchain_core.messages import AIMessage
-import time
-import json
+from ..base_agent import BaseAgent
 
+class ConservativeDebator(BaseAgent):
+    def __init__(self, llm):
+        super().__init__("conservative_debator", llm)
 
-def create_safe_debator(llm):
-    def safe_node(state) -> dict:
+    async def run(self, state) -> dict:
         risk_debate_state = state["risk_debate_state"]
         history = risk_debate_state.get("history", "")
         safe_history = risk_debate_state.get("safe_history", "")
@@ -33,7 +34,7 @@ Here is the current conversation history: {history} Here is the last response fr
 
 Engage by questioning their optimism and emphasizing the potential downsides they may have overlooked. Address each of their counterpoints to showcase why a conservative stance is ultimately the safest path for the firm's assets. Focus on debating and critiquing their arguments to demonstrate the strength of a low-risk strategy over their approaches. Output conversationally as if you are speaking without any special formatting."""
 
-        response = llm.invoke(prompt)
+        response = self.llm.invoke(prompt)
 
         argument = f"Safe Analyst: {response.content}"
 
@@ -54,5 +55,3 @@ Engage by questioning their optimism and emphasizing the potential downsides the
         }
 
         return {"risk_debate_state": new_risk_debate_state}
-
-    return safe_node

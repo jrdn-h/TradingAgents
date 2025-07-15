@@ -6,7 +6,7 @@ Test script to verify Prometheus metrics integration.
 import asyncio
 import requests
 from tradingagents.backtest.metrics import (
-    tweet_rate_gauge, 
+    tweet_ingested_total_counter, 
     sentiment_index_gauge, 
     sharpe_gauge,
     calculate_metrics
@@ -20,7 +20,7 @@ def test_prometheus_metrics():
     
     # Test 1: Update some metrics
     print("📊 Updating metrics...")
-    tweet_rate_gauge.inc()  # Increment tweet counter
+    tweet_ingested_total_counter.inc()  # Increment tweet counter
     sentiment_index_gauge.set(0.5)  # Set sentiment to 0.5
     sharpe_gauge.set(1.23)  # Set Sharpe ratio
     

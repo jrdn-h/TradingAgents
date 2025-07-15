@@ -1,34 +1,18 @@
-import tradingagents.default_config as default_config
-from typing import Dict, Optional
+from tradingagents.config import settings
 
-# Use default config but allow it to be overridden
-_config: Optional[Dict] = None
-DATA_DIR: Optional[str] = None
+def get_config():
+    """
+    Returns the current configuration.
+    """
+    return settings.model_dump()
 
-
-def initialize_config():
-    """Initialize the configuration with default values."""
-    global _config, DATA_DIR
-    if _config is None:
-        _config = default_config.DEFAULT_CONFIG.copy()
-        DATA_DIR = _config["data_dir"]
-
-
-def set_config(config: Dict):
-    """Update the configuration with custom values."""
-    global _config, DATA_DIR
-    if _config is None:
-        _config = default_config.DEFAULT_CONFIG.copy()
-    _config.update(config)
-    DATA_DIR = _config["data_dir"]
-
-
-def get_config() -> Dict:
-    """Get the current configuration."""
-    if _config is None:
-        initialize_config()
-    return _config.copy()
-
-
-# Initialize with default config
-initialize_config()
+def set_config(new_config):
+    """
+    Updates the configuration.
+    """
+    global settings
+    # This is not ideal, but it's the simplest way to update the settings
+    # without a major refactor of the application.
+    for key, value in new_config.items():
+        if hasattr(settings, key):
+            setattr(settings, key, value)

@@ -11,28 +11,16 @@ import os
 from dateutil.relativedelta import relativedelta
 from langchain_openai import ChatOpenAI
 import tradingagents.dataflows.interface as interface
-from tradingagents.default_config import DEFAULT_CONFIG
+from tradingagents.config import settings
 from langchain_core.messages import HumanMessage
 
 
-def create_msg_delete():
-    def delete_messages(state):
-        """Clear messages and add placeholder for Anthropic compatibility"""
-        messages = state["messages"]
-        
-        # Remove all messages
-        removal_operations = [RemoveMessage(id=m.id) for m in messages]
-        
-        # Add a minimal placeholder message
-        placeholder = HumanMessage(content="Continue")
-        
-        return {"messages": removal_operations + [placeholder]}
-    
-    return delete_messages
-
-
 class Toolkit:
-    _config = DEFAULT_CONFIG.copy()
+    _config: dict = {}
+
+    def __init__(self, config=None):
+        self._config = config or settings.model_dump()
+        self.update_config(self._config)
 
     @classmethod
     def update_config(cls, config):
@@ -40,13 +28,9 @@ class Toolkit:
         cls._config.update(config)
 
     @property
-    def config(self):
+    def get_config(self):
         """Access the configuration."""
         return self._config
-
-    def __init__(self, config=None):
-        if config:
-            self.update_config(config)
 
     @staticmethod
     @tool
