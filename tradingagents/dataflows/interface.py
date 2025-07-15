@@ -1,4 +1,4 @@
-from typing import Annotated, Dict
+from typing import Annotated, Dict, List, Optional
 from .reddit_utils import fetch_top_from_category
 from .yfin_utils import *
 from .stockstats_utils import *
@@ -11,7 +11,16 @@ import json
 import os
 import pandas as pd
 from tqdm import tqdm
-import yfinance as yf
+
+# Optional dependency guard: https://stackoverflow.com/q/77512072
+try:
+    import yfinance as yf
+    YFINANCE_AVAILABLE = True
+except ImportError:
+    yf = None
+    YFINANCE_AVAILABLE = False
+    print("[WARN] yfinance not installed in interface.py. Yahoo Finance data will be unavailable.")
+
 from openai import OpenAI
 from .config import get_config, set_config, DATA_DIR
 
@@ -635,6 +644,8 @@ def get_YFin_data_online(
     datetime.strptime(end_date, "%Y-%m-%d")
 
     # Create ticker object
+    if not YFINANCE_AVAILABLE:
+        raise ImportError("yfinance is required to fetch stock data but is not installed. Install with: pip install yfinance")
     ticker = yf.Ticker(symbol.upper())
 
     # Fetch historical data for the specified date range

@@ -1,5 +1,10 @@
 typing-extensions
 langchain-openai
+fastapi
+uvicorn[standard]
+requests
+prometheus-fastapi-instrumentator
+prometheus-client
 langchain-experimental
 pandas
 yfinance

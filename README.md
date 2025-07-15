@@ -8,9 +8,37 @@ An LLM‑driven, multi‑agent prototype that ingests crypto‑market data, reas
 ```bash
 git clone https://github.com/<org>/<repo>.git
 cd <repo>
-poetry install  # Python 3.11+
+
+# Basic installation (core features only)
+poetry install  # Python 3.11+
+
+# Install with financial data support (Yahoo Finance + technical indicators)
+poetry install -E finance
+
+# Install with all optional features
+poetry install -E all
+
+# Run demo
 poetry run python -m tradingagents run-demo --symbol BTCUSD
 ```
+
+See [DEPENDENCIES.md](DEPENDENCIES.md) for details on optional features.
+
+### Dashboard
+
+Start the live monitoring dashboard:
+
+```bash
+poetry run python -m tradingagents dashboard
+```
+
+Then open http://localhost:8000 in your browser to see:
+- Real-time price updates
+- Technical indicators (SMA/EMA/breakout)
+- Sentiment analysis
+- Trade decisions and risk approvals
+- Live equity curve chart
+- Auto-refreshing every 2 seconds
 
 ### Live mode
 
@@ -28,6 +56,43 @@ Example output
 {"action":"long","size_pct":2}
 {"approved":true,"new_size_pct":2}
 {"breakout":true,"sma":43050.0,"ema":43123.7}
+```
+
+### Historical Replay
+
+Test your strategy against historical data with sentiment correlation analysis:
+
+```bash
+# Basic replay with mock data
+poetry run python -m tradingagents replay --from 2024-01-01 --to 2024-01-02 --symbol BTCUSD
+
+# Replay with historical tweets
+poetry run python -m tradingagents replay \
+  --from 2024-01-01 --to 2024-01-02 \
+  --symbol BTCUSD --tweets sample_tweets.csv --plot
+```
+
+This generates:
+- **Performance metrics**: Sharpe ratio, max drawdown, win rate
+- **Sentiment correlation**: How well sentiment predicts price movements  
+- **Trade analysis**: PnL distribution, entry/exit timing
+- **Visualization**: Price vs sentiment overlay, equity curve, trade distribution
+
+Example output:
+```
+📈 REPLAY RESULTS: BTCUSD
+============================================================
+Period: 2024-01-01 00:00:00 to 2024-01-02 00:00:00
+Initial Equity: $10,000.00
+Final Equity:   $10,245.67
+Total Return:   2.46%
+Sharpe Ratio:   1.23
+Max Drawdown:   -1.2%
+Total Trades:   8
+Sentiment Correlation: 0.156
+🎯 SIGNIFICANT sentiment-price correlation detected!
+Win Rate:       75.0%
+============================================================
 ```
 
 ## How it works

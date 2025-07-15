@@ -6,15 +6,42 @@ import json
 from datetime import date
 from typing import Dict, Any, Tuple, List, Optional
 
-from langchain_openai import ChatOpenAI
-from langchain_anthropic import ChatAnthropic
-from langchain_google_genai import ChatGoogleGenerativeAI
+# --- Optional dependencies ---
+# Optional dependency guard: https://stackoverflow.com/q/77512072
+try:
+    from langchain_openai import ChatOpenAI
+except ImportError:
+    ChatOpenAI = None  # type: ignore
+    print("[WARN] langchain_openai not installed. OpenAI LLMs will be unavailable.")
+
+# Optional dependency guard: https://stackoverflow.com/q/77512072
+try:
+    from langchain_anthropic import ChatAnthropic
+except ImportError:
+    ChatAnthropic = None  # type: ignore
+    print("[WARN] langchain_anthropic not installed. Anthropic LLMs will be unavailable.")
+
+# Optional dependency guard: https://stackoverflow.com/q/77512072
+try:
+    from langchain_google_genai import ChatGoogleGenerativeAI
+except ImportError:
+    ChatGoogleGenerativeAI = None  # type: ignore
+    print("[WARN] langchain_google_genai not installed. Google LLMs will be unavailable.")
 
 from langgraph.prebuilt import ToolNode
 
 from tradingagents.agents import *
 from tradingagents.default_config import DEFAULT_CONFIG
-from tradingagents.agents.utils.memory import FinancialSituationMemory
+
+# Optional dependency guard: https://stackoverflow.com/q/77512072
+try:
+    from tradingagents.agents.utils.memory import FinancialSituationMemory
+    MEMORY_AVAILABLE = True
+except ImportError:
+    FinancialSituationMemory = None
+    MEMORY_AVAILABLE = False
+    print("[WARN] FinancialSituationMemory unavailable (chromadb not installed)")
+
 from tradingagents.agents.utils.agent_states import (
     AgentState,
     InvestDebateState,
@@ -58,13 +85,20 @@ class TradingAgentsGraph:
         )
 
         # Initialize LLMs
-        if self.config["llm_provider"].lower() == "openai" or self.config["llm_provider"] == "ollama" or self.config["llm_provider"] == "openrouter":
+        provider = self.config["llm_provider"].lower()
+        if provider in ("openai", "ollama", "openrouter"):
+            if ChatOpenAI is None:
+                raise ImportError("OpenAI LLM provider selected but langchain_openai is not installed.")
             self.deep_thinking_llm = ChatOpenAI(model=self.config["deep_think_llm"], base_url=self.config["backend_url"])
             self.quick_thinking_llm = ChatOpenAI(model=self.config["quick_think_llm"], base_url=self.config["backend_url"])
-        elif self.config["llm_provider"].lower() == "anthropic":
+        elif provider == "anthropic":
+            if ChatAnthropic is None:
+                raise ImportError("Anthropic LLM provider selected but langchain_anthropic is not installed.")
             self.deep_thinking_llm = ChatAnthropic(model=self.config["deep_think_llm"], base_url=self.config["backend_url"])
             self.quick_thinking_llm = ChatAnthropic(model=self.config["quick_think_llm"], base_url=self.config["backend_url"])
-        elif self.config["llm_provider"].lower() == "google":
+        elif provider == "google":
+            if ChatGoogleGenerativeAI is None:
+                raise ImportError("Google LLM provider selected but langchain_google_genai is not installed.")
             self.deep_thinking_llm = ChatGoogleGenerativeAI(model=self.config["deep_think_llm"])
             self.quick_thinking_llm = ChatGoogleGenerativeAI(model=self.config["quick_think_llm"])
         else:
@@ -73,11 +107,19 @@ class TradingAgentsGraph:
         self.toolkit = Toolkit(config=self.config)
 
         # Initialize memories
-        self.bull_memory = FinancialSituationMemory("bull_memory", self.config)
-        self.bear_memory = FinancialSituationMemory("bear_memory", self.config)
-        self.trader_memory = FinancialSituationMemory("trader_memory", self.config)
-        self.invest_judge_memory = FinancialSituationMemory("invest_judge_memory", self.config)
-        self.risk_manager_memory = FinancialSituationMemory("risk_manager_memory", self.config)
+        if MEMORY_AVAILABLE:
+            self.bull_memory = FinancialSituationMemory("bull_memory", self.config)
+            self.bear_memory = FinancialSituationMemory("bear_memory", self.config)
+            self.trader_memory = FinancialSituationMemory("trader_memory", self.config)
+            self.invest_judge_memory = FinancialSituationMemory("invest_judge_memory", self.config)
+            self.risk_manager_memory = FinancialSituationMemory("risk_manager_memory", self.config)
+        else:
+            print("[WARN] Memory features disabled - chromadb not installed")
+            self.bull_memory = None
+            self.bear_memory = None
+            self.trader_memory = None
+            self.invest_judge_memory = None
+            self.risk_manager_memory = None
 
         # Create tool nodes
         self.tool_nodes = self._create_tool_nodes()

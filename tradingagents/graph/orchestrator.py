@@ -4,6 +4,7 @@ Minimal LangGraph orchestrator for multi-agent trading demo.
 
 import asyncio
 import logging
+from collections import deque
 from tradingagents.agents import (
     SentimentAnalyst,
     TechnicalAnalyst,
@@ -11,10 +12,40 @@ from tradingagents.agents import (
     RiskManager
 )
 from tradingagents.dataflows.hyperliquid_utils import mock_hyperliquid_ws_listener
+from tradingagents.sentiment.model import SentimentModel, SentimentResult
+from tradingagents.sources.tweet_source import Tweet
 
 logger = logging.getLogger(__name__)
 
 class Orchestrator:
+    def __init__(self):
+        self.sentiment_model = SentimentModel()
+        self.tweet_buffer = deque(maxlen=100)  # Ring buffer for last 100 tweets
+        self.sentiment_index = 0.0  # Rolling sentiment average (smoothed)
+        self.sentiment_ema_alpha = 0.5  # EMA smoothing factor
+    
+    async def ingest_tweet(self, tweet: Tweet) -> SentimentResult:
+        """Process a tweet and update sentiment state."""
+        # Score the tweet
+        sentiment = self.sentiment_model.score(tweet.text)
+        
+        # Add to buffer
+        self.tweet_buffer.append({
+            "tweet": tweet,
+            "sentiment": sentiment
+        })
+        
+        # Update rolling sentiment index with EMA smoothing
+        if len(self.tweet_buffer) > 0:
+            scores = [item["sentiment"].score for item in self.tweet_buffer]
+            raw_average = sum(scores) / len(scores)
+            # Apply EMA smoothing: new_index = α * new_score + (1-α) * old_index
+            self.sentiment_index = (self.sentiment_ema_alpha * raw_average + 
+                                  (1 - self.sentiment_ema_alpha) * self.sentiment_index)
+        
+        logger.info(f"Tweet from @{tweet.author}: {tweet.text[:50]}... (score: {sentiment.score:.3f})")
+        return sentiment
+
     async def run_once(self, symbol: str = "BTCUSD", live: bool = False) -> None:
         """Run a single end-to-end pass and print the final approved trade."""
         state = {}

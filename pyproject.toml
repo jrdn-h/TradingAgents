@@ -25,12 +25,69 @@ python-dotenv = "^1.0.1"
 asyncio = "^3.4.3"
 feedparser = "^6.0.11"
 pandas_ta = "^0.3.14b0"
-yfinance = "^0.2.38"
 matplotlib = "^3.10.0"
+prometheus-fastapi-instrumentator = "^7.1.0"
+twikit = "^2.3.3"
+transformers = "^4.53.2"
+torch = "^2.7.1"
 
 [tool.poetry.group.dev.dependencies]
-pytest = "^8.0.0"
+pytest = "^8.2.0"
 pytest-asyncio = "^0.24.0"
+
+# Poetry's official documentation for optional groups:
+# https://python-poetry.org/docs/master/managing-dependencies/#optional-groups
+
+[tool.poetry.group.docs]
+optional = true
+[tool.poetry.group.docs.dependencies]
+mkdocs = "^1.6.0"
+mkdocs-material = "^9.5.18"
+
+[tool.poetry.group.finance]
+optional = true
+[tool.poetry.group.finance.dependencies]
+yfinance = "^0.2.38"
+stockstats = "^0.6.2"
+
+[tool.poetry.group.memory]
+optional = true
+[tool.poetry.group.memory.dependencies]
+chromadb = "^0.5.0"
+
+[tool.poetry.group.anthropic]
+optional = true
+[tool.poetry.group.anthropic.dependencies]
+langchain-anthropic = "^0.3.17"
+
+[tool.poetry.group.google]
+optional = true
+[tool.poetry.group.google.dependencies]
+langchain-google-genai = "^2.0.0"
+
+[tool.poetry.group.hyperliquid]
+optional = true
+[tool.poetry.group.hyperliquid.dependencies]
+
+[tool.poetry.group.finnhub]
+optional = true
+[tool.poetry.group.finnhub.dependencies]
+
+[tool.poetry.group.news]
+optional = true
+[tool.poetry.group.news.dependencies]
+
+[tool.poetry.group.reddit]
+optional = true
+[tool.poetry.group.reddit.dependencies]
+
+[tool.poetry.group.twitter]
+optional = true
+[tool.poetry.group.twitter.dependencies]
+
+[tool.poetry.group.whale_alert]
+optional = true
+[tool.poetry.group.whale_alert.dependencies]
 
 [build-system]
 requires = ["poetry-core>=1.0.0"]

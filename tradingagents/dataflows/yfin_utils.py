@@ -1,6 +1,14 @@
 # gets data/stats
 
-import yfinance as yf
+# Optional dependency guard: https://stackoverflow.com/q/77512072
+try:
+    import yfinance as yf
+    YFINANCE_AVAILABLE = True
+except ImportError:
+    yf = None
+    YFINANCE_AVAILABLE = False
+    print("[WARN] yfinance not installed. Yahoo Finance data will be unavailable.")
+
 from typing import Annotated, Callable, Any, Optional
 from pandas import DataFrame
 import pandas as pd
@@ -14,6 +22,8 @@ def init_ticker(func: Callable) -> Callable:
 
     @wraps(func)
     def wrapper(symbol: Annotated[str, "ticker symbol"], *args, **kwargs) -> Any:
+        if not YFINANCE_AVAILABLE:
+            raise ImportError("yfinance is required for this function but is not installed. Install with: pip install yfinance")
         ticker = yf.Ticker(symbol)
         return func(ticker, *args, **kwargs)
 

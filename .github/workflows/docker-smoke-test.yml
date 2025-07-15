@@ -1,0 +1,37 @@
+name: Docker Smoke Test
+
+on:
+  push:
+    branches: [ main ]
+  pull_request:
+    branches: [ main ]
+
+jobs:
+  smoke-test:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check out code
+        uses: actions/checkout@v4
+
+      - name: Build and start services
+        run: docker-compose up -d --build
+
+      - name: Wait for app to be healthy
+        run: |
+          timeout=60
+          while ! curl -s http://localhost:8000/; do
+            sleep 1
+            timeout=$((timeout-1))
+            if [ $timeout -le 0 ]; then
+              echo "Timed out waiting for app to be healthy."
+              docker-compose logs
+              exit 1
+            fi
+          done
+
+      - name: Run smoke test
+        run: curl -f http://localhost:8000/
+
+      - name: Tear down services
+        if: always()
+        run: docker-compose down 

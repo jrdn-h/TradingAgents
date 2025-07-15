@@ -1,10 +1,20 @@
+import os
 import chromadb
-from chromadb.config import Settings
+
+# Optional dependency guard: https://stackoverflow.com/q/77512072
+try:
+    from chromadb.utils import embedding_functions
+except ImportError:
+    embedding_functions = None
+
 from openai import OpenAI
 
 
 class FinancialSituationMemory:
     def __init__(self, name, config):
+        if not CHROMADB_AVAILABLE:
+            raise ImportError("chromadb is required for FinancialSituationMemory but is not installed. Install with: pip install chromadb")
+            
         if config["backend_url"] == "http://localhost:11434/v1":
             self.embedding = "nomic-embed-text"
         else:

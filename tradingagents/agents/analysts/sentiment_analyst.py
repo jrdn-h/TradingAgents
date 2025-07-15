@@ -8,12 +8,26 @@ import re
 import math
 from typing import Dict, Any, List
 from ..base_agent import BaseAgent
+from langchain_core.pydantic_v1 import BaseModel, Field
+from typing import List
+from ...sentiment.model import Sentiment
 
+# Optional dependency guard: https://stackoverflow.com/q/77512072
 try:
     import openai
     OPENAI_AVAILABLE = True
 except ImportError:
     OPENAI_AVAILABLE = False
+
+# Optional dependency guard: https://stackoverflow.com/q/77512072
+try:
+    from transformers import pipeline
+except ImportError:
+    pipeline = None
+
+# For local sentiment analysis, we use the FinBERT model pre-trained on financial text.
+# https://huggingface.co/ProsusAI/finbert
+FINBERT_MODEL = "ProsusAI/finbert"
 
 BULLISH_KEYWORDS = ["moon", "bull", "pump", "rally", "🚀", "moonshot", "ATH", "to the moon"]
 BEARISH_KEYWORDS = ["dump", "bear", "crash", "rekt", "panic", "rug", "downtrend", "💀"]

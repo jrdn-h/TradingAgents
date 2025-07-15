@@ -1,6 +1,23 @@
 import pandas as pd
-import yfinance as yf
-from stockstats import wrap
+
+# Optional dependency guard: https://stackoverflow.com/q/77512072
+try:
+    import yfinance as yf
+    YFINANCE_AVAILABLE = True
+except ImportError:
+    yf = None
+    YFINANCE_AVAILABLE = False
+    print("[WARN] yfinance not installed in stockstats_utils. Yahoo Finance data will be unavailable.")
+
+# Optional dependency guard: https://stackoverflow.com/q/77512072
+try:
+    from stockstats import wrap
+    STOCKSTATS_AVAILABLE = True
+except ImportError:
+    wrap = None
+    STOCKSTATS_AVAILABLE = False
+    print("[WARN] stockstats not installed. Technical indicators will be unavailable.")
+
 from typing import Annotated
 import os
 from .config import get_config
@@ -36,6 +53,8 @@ class StockstatsUtils:
                         f"{symbol}-YFin-data-2015-01-01-2025-03-25.csv",
                     )
                 )
+                if not STOCKSTATS_AVAILABLE:
+                    raise ImportError("stockstats is required for technical indicators but is not installed. Install with: pip install stockstats")
                 df = wrap(data)
             except FileNotFoundError:
                 raise Exception("Stockstats fail: Yahoo Finance data not fetched yet!")
@@ -62,6 +81,8 @@ class StockstatsUtils:
                 data = pd.read_csv(data_file)
                 data["Date"] = pd.to_datetime(data["Date"])
             else:
+                if not YFINANCE_AVAILABLE:
+                    raise ImportError("yfinance is required to download stock data but is not installed. Install with: pip install yfinance")
                 data = yf.download(
                     symbol,
                     start=start_date,
@@ -73,6 +94,8 @@ class StockstatsUtils:
                 data = data.reset_index()
                 data.to_csv(data_file, index=False)
 
+            if not STOCKSTATS_AVAILABLE:
+                raise ImportError("stockstats is required for technical indicators but is not installed. Install with: pip install stockstats")
             df = wrap(data)
             df["Date"] = df["Date"].dt.strftime("%Y-%m-%d")
             curr_date = curr_date.strftime("%Y-%m-%d")

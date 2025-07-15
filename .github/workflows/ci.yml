@@ -33,6 +33,20 @@ jobs:
         run: |
           poetry run python -m tradingagents run-demo --symbol BTCUSD 
 
+      - name: Test dashboard API
+        timeout-minutes: 1
+        run: |
+          # Start dashboard in background
+          poetry run python api.py &
+          DASHBOARD_PID=$!
+          sleep 5
+          
+          # Test status endpoint
+          curl -f http://localhost:8000/status || exit 1
+          
+          # Cleanup
+          kill $DASHBOARD_PID || true
+
       - name: Print badge markdown
         if: success()
         run: |

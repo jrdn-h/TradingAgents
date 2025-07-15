@@ -1,0 +1,13 @@
+apiVersion: 1
+
+groups:
+  - name: Trading Strategy Alerts
+    rules:
+      - alert: SharpeRatioLow
+        expr: replay_sharpe_last < 0.5
+        for: 1m
+        labels:
+          severity: warning
+        annotations:
+          summary: Sharpe Ratio is low
+          description: "The Sharpe Ratio for the trading strategy has dropped below 0.5, which could indicate poor performance. Current value: {{ $value }}" 
