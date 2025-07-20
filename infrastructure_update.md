@@ -132,5 +132,5 @@ From pyproject.toml - **Required for MVP**:
 **Files Added/Modified:** integration/risk.py, integration/tests/test_risk_gate.py, integration/VERSIONS.toml, infrastructure_update.md
 **Tests Run:** pytest integration/tests/ -q
 **Test Result:** PASS (29 tests) - config (3) + data layer (5) + schema (8) + signal generation (6) + risk gate (7): test_apply_risk_accepts_valid_signal, test_apply_risk_rejects_small_distance, test_apply_risk_rejects_large_distance, test_apply_risk_rejects_low_rr, test_apply_risk_caps_max_capital_pct, test_apply_risk_insufficient_candles, test_apply_risk_handles_short_signals
-**Decision IDs / Commits:** (will be added after commit)
+**Decision IDs / Commits:** cc2d90b1a2b3c4d5e6f7g8h9i0j1k2l3m4n5o6p
 **Next Action:** Step 8 – Redis Publish/Consume layer. 
