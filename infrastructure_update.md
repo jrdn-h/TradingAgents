@@ -161,4 +161,13 @@ From pyproject.toml - **Required for MVP**:
 **Tests Run:** pytest integration/tests/test_logging_utils.py -v ; pytest integration/tests/ -q
 **Test Result:** PASS (55 tests) - config (3) + data layer (5) + schema (8) + signal generation (6) + risk gate (7) + publish/consume (7) + strategy bridge (11) + logging utilities (8): test_append_decision_creates_and_appends, test_append_trade_result_creates_and_appends, test_append_decision_idempotent_header, test_append_trade_result_idempotent_header, test_append_decision_formats_numbers, test_append_trade_result_formats_numbers, test_directory_creation, test_empty_decision_logs_directory_handling
 **Decision IDs / Commits:** aa3ed05cdef1234567890abcdef1234567890ab
-**Next Action:** Step 11 – Run Cycle script (or integration E2E harness). 
+**Next Action:** Step 11 – Run Cycle script (or integration E2E harness).
+
+## Step 11: Run Cycle Script
+**Timestamp (UTC):** 2025-07-20 00:18
+**Description:** Added end-to-end cycle script (config→data→signal→risk→publish/log) with preview mode and unit tests.
+**Files Added/Modified:** integration/scripts/run_cycle.py, integration/tests/test_run_cycle.py, integration/VERSIONS.toml, infrastructure_update.md
+**Tests Run:** pytest integration/tests/test_run_cycle.py -v ; pytest integration/tests/ -q
+**Test Result:** PASS (61 tests) - config (3) + data layer (5) + schema (8) + signal generation (6) + risk gate (7) + publish/consume (7) + strategy bridge (11) + logging utilities (8) + run cycle (6): test_run_cycle_no_breakout, test_run_cycle_risk_filtered, test_run_cycle_published, test_run_cycle_preview, test_run_cycle_symbol_override, test_run_cycle_risk_config_mapping
+**Decision IDs / Commits:** (will be added after commit)
+**Next Action:** Step 12 – G1 Gate Validation (full suite) & prepare for dry-run Freqtrade trade. 
