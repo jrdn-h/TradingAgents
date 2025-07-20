@@ -97,4 +97,13 @@ From pyproject.toml - **Required for MVP**:
 **Tests Run:** pytest integration/tests/ -q ; pytest integration/tests/test_config_loader.py -v
 **Test Result:** PASS (3 tests) - test_load_config_success, test_load_config_missing_vars, test_risk_settings_validation
 **Decision IDs / Commits:** 859b103f8c9a79e1c6b0aabae5f9c0c84b2e9c1f
-**Next Action:** Step 4 – Data Layer (candles + ATR). 
+**Next Action:** Step 4 – Data Layer (candles + ATR).
+
+## Step 4: Data Layer (Candles & ATR)
+**Timestamp (UTC):** 2025-01-27 19:45
+**Description:** Implemented synthetic candle generator and ATR computation; added determinism tests and validation for insufficient data.
+**Files Added/Modified:** integration/data.py, integration/tests/test_data_layer.py, integration/VERSIONS.toml, infrastructure_update.md
+**Tests Run:** pytest integration/tests/ -q
+**Test Result:** PASS (8 tests) - config (3) + data layer (5): test_get_candles_structure, test_compute_atr_positive, test_compute_atr_insufficient, test_determinism_same_symbol, test_symbol_variation_differs
+**Decision IDs / Commits:** (will be added after commit)
+**Next Action:** Step 5 – Schema (TradingSignal v1.0). 
