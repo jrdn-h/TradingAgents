@@ -96,5 +96,5 @@ From pyproject.toml - **Required for MVP**:
 **Files Added/Modified:** .env.example, integration/config/config.py, integration/tests/test_config_loader.py, integration/VERSIONS.toml, infrastructure_update.md
 **Tests Run:** pytest integration/tests/ -q ; pytest integration/tests/test_config_loader.py -v
 **Test Result:** PASS (3 tests) - test_load_config_success, test_load_config_missing_vars, test_risk_settings_validation
-**Decision IDs / Commits:** (will be added after commit)
+**Decision IDs / Commits:** 859b103f8c9a79e1c6b0aabae5f9c0c84b2e9c1f
 **Next Action:** Step 4 – Data Layer (candles + ATR). 
