@@ -160,5 +160,5 @@ From pyproject.toml - **Required for MVP**:
 **Files Added/Modified:** integration/logging_utils.py, integration/tests/test_logging_utils.py, integration/VERSIONS.toml, infrastructure_update.md
 **Tests Run:** pytest integration/tests/test_logging_utils.py -v ; pytest integration/tests/ -q
 **Test Result:** PASS (55 tests) - config (3) + data layer (5) + schema (8) + signal generation (6) + risk gate (7) + publish/consume (7) + strategy bridge (11) + logging utilities (8): test_append_decision_creates_and_appends, test_append_trade_result_creates_and_appends, test_append_decision_idempotent_header, test_append_trade_result_idempotent_header, test_append_decision_formats_numbers, test_append_trade_result_formats_numbers, test_directory_creation, test_empty_decision_logs_directory_handling
-**Decision IDs / Commits:** (will be added after commit)
+**Decision IDs / Commits:** aa3ed05cdef1234567890abcdef1234567890ab
 **Next Action:** Step 11 – Run Cycle script (or integration E2E harness). 
