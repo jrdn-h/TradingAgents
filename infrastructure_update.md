@@ -115,4 +115,13 @@ From pyproject.toml - **Required for MVP**:
 **Tests Run:** pytest integration/tests/ -q
 **Test Result:** PASS (16 tests) - config (3) + data layer (5) + schema (8): test_valid_signal_roundtrip, test_invalid_tp_count, test_invalid_tp_sum, test_confidence_bounds, test_entry_requirements, test_symbol_uppercased, test_rationale_max_length, test_max_capital_pct_bounds
 **Decision IDs / Commits:** 22518d5f8e9a1b2c3d4e5f6g7h8i9j0k1l2m3n4o
-**Next Action:** Step 6 – Signal Generation (generate_signal) using breakout pattern. 
+**Next Action:** Step 6 – Signal Generation (generate_signal) using breakout pattern.
+
+## Step 6: Signal Generation (Breakout)
+**Timestamp (UTC):** 2025-01-27 19:54
+**Description:** Implemented deterministic breakout-based long signal generator with fixed stop & two R-multiple targets; added comprehensive unit tests.
+**Files Added/Modified:** integration/signal_gen.py, integration/tests/test_signal_gen.py, integration/VERSIONS.toml, infrastructure_update.md
+**Tests Run:** pytest integration/tests/ -q
+**Test Result:** PASS (22 tests) - config (3) + data layer (5) + schema (8) + signal generation (6): test_generate_signal_breakout_creates_signal, test_generate_signal_no_breakout_returns_none, test_generate_signal_stop_below_entry, test_generate_signal_sizes_sum, test_generate_signal_minimum_candles, test_generate_signal_invalid_stop_position
+**Decision IDs / Commits:** (will be added after commit)
+**Next Action:** Step 7 – Risk Gate (ATR & RR validation). 
