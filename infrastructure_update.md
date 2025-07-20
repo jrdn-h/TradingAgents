@@ -257,5 +257,5 @@ From pyproject.toml - **Required for MVP**:
 **Files Modified:** integration/tests/test_config_loader.py, integration/config/config.py, infrastructure_update.md
 **Tests Run:** pytest integration/tests/test_config_loader.py -q ; pytest integration/tests/ -q
 **Test Result:** PASS (68 tests total, 3 config tests)
-**Decision IDs / Commits:** (will be added after commit)
+**Decision IDs / Commits:** deb96d2
 **Next Action:** Resume Step 16 – CI & Environments workflow validation. 
