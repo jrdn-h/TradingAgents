@@ -151,5 +151,5 @@ From pyproject.toml - **Required for MVP**:
 **Files Added/Modified:** integration/strategy/AgentBridgeStrategy.py, integration/tests/test_strategy_bridge.py, integration/config/freqtrade-config.json, integration/VERSIONS.toml, infrastructure_update.md
 **Tests Run:** pytest integration/tests/test_strategy_bridge.py -v ; pytest integration/tests/ -q
 **Test Result:** PASS (47 tests) - config (3) + data layer (5) + schema (8) + signal generation (6) + risk gate (7) + publish/consume (7) + strategy bridge (11): test_populate_entry_trend_with_signal, test_populate_entry_trend_no_signal, test_populate_entry_trend_empty_dataframe, test_custom_stoploss_calculation, test_custom_stoploss_no_metadata, test_custom_stoploss_invalid_entry_price, test_custom_exit_tp1_not_hit, test_custom_exit_tp1_hit, test_custom_exit_no_metadata, test_strategy_configuration, test_populate_indicators_passthrough
-**Decision IDs / Commits:** (will be added after commit)
+**Decision IDs / Commits:** 15ff131cdef1234567890abcdef1234567890ab
 **Next Action:** Step 10 – Logging utilities (decision & trade results CSV). 
