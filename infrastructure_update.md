@@ -239,5 +239,5 @@ From pyproject.toml - **Required for MVP**:
 **Files Added/Modified:** envs/core.txt, envs/freqtrade-extra.txt (created), .github/workflows/mvp-integration.yml, integration/VERSIONS.toml, infrastructure_update.md
 **Tests Run:** pytest integration/tests/ -q
 **Test Result:** PASS (68 tests)
-**Decision IDs / Commits:** (will be added after commit)
+**Decision IDs / Commits:** 10c3721
 **Next Action:** Post-MVP roadmap (all gates G1-G4 achieved) 
