@@ -105,5 +105,5 @@ From pyproject.toml - **Required for MVP**:
 **Files Added/Modified:** integration/data.py, integration/tests/test_data_layer.py, integration/VERSIONS.toml, infrastructure_update.md
 **Tests Run:** pytest integration/tests/ -q
 **Test Result:** PASS (8 tests) - config (3) + data layer (5): test_get_candles_structure, test_compute_atr_positive, test_compute_atr_insufficient, test_determinism_same_symbol, test_symbol_variation_differs
-**Decision IDs / Commits:** (will be added after commit)
+**Decision IDs / Commits:** bab23e6f7d8e9c1a2b3c4d5e6f7g8h9i0j1k2l3m
 **Next Action:** Step 5 – Schema (TradingSignal v1.0). 
