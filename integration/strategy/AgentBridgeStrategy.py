@@ -1,16 +1,25 @@
-"""Freqtrade strategy bridge to consume TradingAgent signals via Redis."""
+"""Freqtrade strategy bridge consuming Redis signals for trading decisions."""
 
-from __future__ import annotations
-from freqtrade.strategy.interface import IStrategy
+import logging
+from pathlib import Path
+import json
+from typing import Dict, Any, Optional
 from pandas import DataFrame
-from typing import Dict, Any
+
+# Freqtrade imports
+from freqtrade.strategy import IStrategy
+
+# Integration imports
 from integration.publish import fetch_latest_signal
-from datetime import datetime, timezone
+from integration.schema.signal import TradingSignal
+
+logger = logging.getLogger(__name__)
 
 
 class AgentBridgeStrategy(IStrategy):
-    """Bridge strategy to consume TradingAgent signals and execute trades."""
+    """Freqtrade strategy that consumes TradingSignals from Redis."""
     
+    INTERFACE_VERSION = 3
     timeframe = "5m"
     startup_candle_count = 50
     can_short = False
@@ -30,11 +39,53 @@ class AgentBridgeStrategy(IStrategy):
         """Populate indicators - no indicators for MVP."""
         return dataframe
 
+    def fetch_bridge_signal_file_based(self, pair: str) -> Optional[TradingSignal]:
+        """Fetch signal from file-based approach (fallback for testing)."""
+        try:
+            signals_dir = Path("temp_signals")
+            if not signals_dir.exists():
+                return None
+                
+            # Look for recent signal files for this pair
+            pair_pattern = pair.replace('/', '_')
+            signal_files = list(signals_dir.glob(f"signal_{pair_pattern}_*.json"))
+            
+            if not signal_files:
+                return None
+                
+            # Get the most recent signal file
+            latest_file = max(signal_files, key=lambda f: f.stat().st_mtime)
+            
+            # Read and parse signal
+            with open(latest_file, 'r') as f:
+                signal_data = json.load(f)
+                
+            signal = TradingSignal(**signal_data)
+            logger.info(f"Loaded file-based signal: {signal.decision_id} for {pair}")
+            
+            # Remove file after reading to prevent re-use
+            latest_file.unlink()
+            
+            return signal
+            
+        except Exception as e:
+            logger.warning(f"File-based signal fetch failed: {e}")
+            return None
+
     def fetch_bridge_signal(self, pair: str):
-        """Fetch latest signal from Redis for given pair."""
-        # pair from Freqtrade is 'BTC/USDT'
-        signal = fetch_latest_signal(pair)
-        return signal
+        """Fetch latest signal from Redis for given pair, with file-based fallback."""
+        try:
+            # Try Redis first
+            signal = fetch_latest_signal(pair)
+            if signal:
+                logger.info(f"Redis signal fetched: {signal.decision_id}")
+                return signal
+        except Exception as e:
+            logger.warning(f"Redis signal fetch failed: {e}")
+        
+        # Fallback to file-based approach
+        logger.info("Trying file-based signal fetch...")
+        return self.fetch_bridge_signal_file_based(pair)
 
     def populate_entry_trend(self, dataframe: DataFrame, metadata: Dict[str, Any]) -> DataFrame:
         """Populate entry signals based on Redis queue."""
@@ -61,6 +112,8 @@ class AgentBridgeStrategy(IStrategy):
                 "tp2": signal.risk.take_profits[1].price,
                 "timestamp": signal.timestamp
             }
+            
+            logger.info(f"Entry signal set for {pair}, decision_id: {signal.decision_id}")
             
         return dataframe
 
