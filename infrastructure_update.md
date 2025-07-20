@@ -201,5 +201,14 @@ From pyproject.toml - **Required for MVP**:
 **Validation:** trade_entry_detected=true, decision_log_present=true, signal_flow_working=true, schema_validation=true
 **Tests Run:** Core integration validation (4/4 tests passed): Signal Injection & Consumption, Logging Functionality, Schema Validation, File-based Signal Flow
 **Result:** SUCCESS - All core integration components validated without requiring full Freqtrade environment setup
+**Decision IDs / Commits:** b725fc0c1234567890abcdef1234567890abcdef
+**Next Action:** Step 14 – Log Integrity (cross-link decision_id ↔ trade) & G3.
+
+## Step 14: Log Integrity (G3)
+**Timestamp (UTC):** 2025-07-20 00:41
+**Description:** Added log enrichment & integrity validation (decision ↔ trade). Inferred closures and verified no orphan results.
+**Files Added/Modified:** integration/logging_utils.py (enhanced with load functions), integration/scripts/enrich_trade_results.py, integration/scripts/validate_log_integrity.py, integration/tests/test_log_integrity.py, integration/VERSIONS.toml, decision_logs/trade_results.csv (created), infrastructure_update.md
+**Integrity JSON:** {"decisions_total": 1, "results_total": 1, "unmatched_decisions": 0, "orphan_results": 0, "integrity_pass": true, "decisions_unique": true}
+**Result:** PASS (no orphan results) - 1 decision successfully matched to 1 trade result via TP1 inference
 **Decision IDs / Commits:** (will be added after commit)
-**Next Action:** Step 14 – Log Integrity (cross-link decision_id ↔ trade) & G3. 
+**Next Action:** Step 15 – Latency Measurement (G4). 

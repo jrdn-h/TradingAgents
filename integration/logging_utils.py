@@ -7,7 +7,7 @@ from pathlib import Path
 from typing import Union
 from integration.schema.signal import TradingSignal
 
-__all__ = ["append_decision", "append_trade_result", "DECISION_LOG", "TRADE_RESULTS_LOG"]
+__all__ = ["append_decision", "append_trade_result", "load_decisions", "load_trade_results", "DECISION_LOG", "TRADE_RESULTS_LOG"]
 
 DECISION_LOG = Path("decision_logs/decision_log.csv")
 TRADE_RESULTS_LOG = Path("decision_logs/trade_results.csv")
@@ -78,4 +78,24 @@ def append_trade_result(decision_id: str, exit_price: float, pnl_r_multiple: flo
             f"{pnl_r_multiple:.4f}",
             exit_reason,
             timestamp
-        ]) 
+        ])
+
+
+def load_decisions(path=DECISION_LOG):
+    """Load decisions from CSV file."""
+    if not path.exists():
+        return []
+    import csv
+    with path.open() as f:
+        r = csv.DictReader(f)
+        return list(r)
+
+
+def load_trade_results(path=TRADE_RESULTS_LOG):
+    """Load trade results from CSV file."""
+    if not path.exists():
+        return []
+    import csv
+    with path.open() as f:
+        r = csv.DictReader(f)
+        return list(r) 
