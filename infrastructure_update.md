@@ -124,4 +124,13 @@ From pyproject.toml - **Required for MVP**:
 **Tests Run:** pytest integration/tests/ -q
 **Test Result:** PASS (22 tests) - config (3) + data layer (5) + schema (8) + signal generation (6): test_generate_signal_breakout_creates_signal, test_generate_signal_no_breakout_returns_none, test_generate_signal_stop_below_entry, test_generate_signal_sizes_sum, test_generate_signal_minimum_candles, test_generate_signal_invalid_stop_position
 **Decision IDs / Commits:** 363e498a1b2c3d4e5f6g7h8i9j0k1l2m3n4o5p6q
-**Next Action:** Step 7 – Risk Gate (ATR & RR validation). 
+**Next Action:** Step 7 – Risk Gate (ATR & RR validation).
+
+## Step 7: Risk Gate
+**Timestamp (UTC):** 2025-01-27 19:57
+**Description:** Added ATR-based risk filter enforcing distance bounds, RR threshold, and capital pct cap; implemented comprehensive unit tests.
+**Files Added/Modified:** integration/risk.py, integration/tests/test_risk_gate.py, integration/VERSIONS.toml, infrastructure_update.md
+**Tests Run:** pytest integration/tests/ -q
+**Test Result:** PASS (29 tests) - config (3) + data layer (5) + schema (8) + signal generation (6) + risk gate (7): test_apply_risk_accepts_valid_signal, test_apply_risk_rejects_small_distance, test_apply_risk_rejects_large_distance, test_apply_risk_rejects_low_rr, test_apply_risk_caps_max_capital_pct, test_apply_risk_insufficient_candles, test_apply_risk_handles_short_signals
+**Decision IDs / Commits:** (will be added after commit)
+**Next Action:** Step 8 – Redis Publish/Consume layer. 
