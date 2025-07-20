@@ -88,4 +88,13 @@ From pyproject.toml - **Required for MVP**:
 **Tests Run:** pytest -q (baseline only, no new tests yet)
 **Test Result:** PASS (2 collection errors from vendor/freqtrade due to missing freqtrade dependencies - expected and not blocking)
 **Decision IDs / Commits:** 8a9567d73a62dc82c8f5f8a8e0fab5e5b5306e5f
-**Next Action:** Proceed to Step 3 – Configuration & .env setup. 
+**Next Action:** Proceed to Step 3 – Configuration & .env setup.
+
+## Step 3: Configuration & .env Setup
+**Timestamp (UTC):** 2025-01-27 19:40
+**Description:** Added .env.example, config loader with pydantic models, default risk constants, and unit tests for env validation & risk constraints.
+**Files Added/Modified:** .env.example, integration/config/config.py, integration/tests/test_config_loader.py, integration/VERSIONS.toml, infrastructure_update.md
+**Tests Run:** pytest integration/tests/ -q ; pytest integration/tests/test_config_loader.py -v
+**Test Result:** PASS (3 tests) - test_load_config_success, test_load_config_missing_vars, test_risk_settings_validation
+**Decision IDs / Commits:** (will be added after commit)
+**Next Action:** Step 4 – Data Layer (candles + ATR). 
