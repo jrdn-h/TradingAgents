@@ -230,5 +230,14 @@ From pyproject.toml - **Required for MVP**:
 **Files Modified:** integration/tests/test_strategy_bridge.py, infrastructure_update.md
 **Tests Run:** pytest integration/tests/test_strategy_bridge.py -v ; pytest integration/tests/ -q
 **Test Result:** PASS (10 strategy tests, 68 total) - removed exhausted side_effect iterables, added proper freqtrade mocking, stable fixtures
+**Decision IDs / Commits:** 7e16802
+**Next Action:** Proceed with Step 16 – CI & Environment Setup (commit & push)
+
+## Step 16: CI & Environments
+**Timestamp (UTC):** 2025-07-20 00:57
+**Description:** Added GitHub Actions workflow (core tests with Redis), core dependency file, optional freqtrade extras stub. Phase bumped if post-G4.
+**Files Added/Modified:** envs/core.txt, envs/freqtrade-extra.txt (created), .github/workflows/mvp-integration.yml, integration/VERSIONS.toml, infrastructure_update.md
+**Tests Run:** pytest integration/tests/ -q
+**Test Result:** PASS (68 tests)
 **Decision IDs / Commits:** (will be added after commit)
-**Next Action:** Proceed with Step 16 – CI & Environment Setup (commit & push) 
+**Next Action:** Post-MVP roadmap (all gates G1-G4 achieved) 
