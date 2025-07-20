@@ -1,1 +1,1 @@
-pandas 
+# pandas moved to core.txt for strategy tests 

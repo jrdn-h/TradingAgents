@@ -240,4 +240,13 @@ From pyproject.toml - **Required for MVP**:
 **Tests Run:** pytest integration/tests/ -q
 **Test Result:** PASS (68 tests)
 **Decision IDs / Commits:** 10c3721
-**Next Action:** Post-MVP roadmap (all gates G1-G4 achieved) 
+**Next Action:** Post-MVP roadmap (all gates G1-G4 achieved)
+
+## Hotfix: Add pandas to core env
+**Timestamp (UTC):** 2025-07-20 01:01
+**Description:** Added pandas dependency to core test environment to satisfy AgentBridgeStrategy DataFrame-based tests (previous CI failure).
+**Files Modified:** envs/core.txt (added pandas), envs/freqtrade-extra.txt (removed pandas), infrastructure_update.md
+**Tests Run:** pytest integration/tests/test_strategy_bridge.py -q ; pytest integration/tests/ -q
+**Test Result:** PASS (68 tests total, 10 strategy tests)
+**Decision IDs / Commits:** (will be added after commit)
+**Next Action:** Resume Step 16 – CI & Environments commit sequence. 
