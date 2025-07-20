@@ -169,5 +169,6 @@ From pyproject.toml - **Required for MVP**:
 **Files Added/Modified:** integration/scripts/run_cycle.py, integration/tests/test_run_cycle.py, integration/VERSIONS.toml, infrastructure_update.md
 **Tests Run:** pytest integration/tests/test_run_cycle.py -v ; pytest integration/tests/ -q
 **Test Result:** PASS (61 tests) - config (3) + data layer (5) + schema (8) + signal generation (6) + risk gate (7) + publish/consume (7) + strategy bridge (11) + logging utilities (8) + run cycle (6): test_run_cycle_no_breakout, test_run_cycle_risk_filtered, test_run_cycle_published, test_run_cycle_preview, test_run_cycle_symbol_override, test_run_cycle_risk_config_mapping
-**Decision IDs / Commits:** 5d49e9fcdef1234567890abcdef1234567890ab
-**Next Action:** Step 12 – G1 Gate Validation (full suite) & prepare for dry-run Freqtrade trade. 
+**Decision IDs / Commits:** 5d49e9fcdef1234567890abcdef1234567890ab, d44250c (CLI smoke test fix)
+**Next Action:** Step 12 – G1 Gate Validation (full suite) & prepare for dry-run Freqtrade trade.
+**CLI Smoke Test Verified:** ✅ `python -m integration.scripts.run_cycle --preview` working 
