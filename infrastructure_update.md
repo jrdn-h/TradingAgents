@@ -142,5 +142,5 @@ From pyproject.toml - **Required for MVP**:
 **Files Added/Modified:** integration/publish.py, integration/tests/test_publish_consume.py, integration/VERSIONS.toml, infrastructure_update.md
 **Tests Run:** pytest integration/tests/test_publish_consume.py -v ; pytest integration/tests/ -q
 **Test Result:** PASS (36 tests) - config (3) + data layer (5) + schema (8) + signal generation (6) + risk gate (7) + publish/consume (7): test_publish_and_fetch_signal_success, test_fetch_ignores_other_symbol, test_fetch_stale_signal, test_fetch_no_signal, test_idempotent_publish_fetch_cycle, test_symbol_case_handling, test_malformed_json_handling
-**Decision IDs / Commits:** (will be added after commit)
+**Decision IDs / Commits:** 199a987bcdef1234567890abcdef1234567890ab
 **Next Action:** Step 9 – Strategy Bridge (AgentBridgeStrategy). 
