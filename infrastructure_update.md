@@ -4,7 +4,7 @@
 **Files Added/Modified:** infrastructure_update.md, INDEX_REPORT.md
 **Tests Run:** pytest -q
 **Test Result:** PASS (0 tests found, no existing tests in project)
-**Decision IDs / Commits:** (will be added after commit)
+**Decision IDs / Commits:** e673a25811ae515cf6672340230ae133b93a03ab
 **Next Action:** Step 2 – Git Integration & Repository Layout scaffolding.
 
 ### Agents Inventory Summary
