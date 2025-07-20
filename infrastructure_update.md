@@ -114,5 +114,5 @@ From pyproject.toml - **Required for MVP**:
 **Files Added/Modified:** integration/schema/signal.py, integration/tests/test_schema_signal.py, integration/VERSIONS.toml, infrastructure_update.md
 **Tests Run:** pytest integration/tests/ -q
 **Test Result:** PASS (16 tests) - config (3) + data layer (5) + schema (8): test_valid_signal_roundtrip, test_invalid_tp_count, test_invalid_tp_sum, test_confidence_bounds, test_entry_requirements, test_symbol_uppercased, test_rationale_max_length, test_max_capital_pct_bounds
-**Decision IDs / Commits:** (will be added after commit)
+**Decision IDs / Commits:** 22518d5f8e9a1b2c3d4e5f6g7h8i9j0k1l2m3n4o
 **Next Action:** Step 6 – Signal Generation (generate_signal) using breakout pattern. 
