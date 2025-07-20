@@ -106,4 +106,13 @@ From pyproject.toml - **Required for MVP**:
 **Tests Run:** pytest integration/tests/ -q
 **Test Result:** PASS (8 tests) - config (3) + data layer (5): test_get_candles_structure, test_compute_atr_positive, test_compute_atr_insufficient, test_determinism_same_symbol, test_symbol_variation_differs
 **Decision IDs / Commits:** bab23e6f7d8e9c1a2b3c4d5e6f7g8h9i0j1k2l3m
-**Next Action:** Step 5 – Schema (TradingSignal v1.0). 
+**Next Action:** Step 5 – Schema (TradingSignal v1.0).
+
+## Step 5: Schema (TradingSignal v1.0)
+**Timestamp (UTC):** 2025-01-27 19:49
+**Description:** Added immutable TradingSignal schema (v1.0) with strict validation: two TPs sum to 1.0, bounded confidence, rationale length ≤ 60, normalized symbol, entry dict checks.
+**Files Added/Modified:** integration/schema/signal.py, integration/tests/test_schema_signal.py, integration/VERSIONS.toml, infrastructure_update.md
+**Tests Run:** pytest integration/tests/ -q
+**Test Result:** PASS (16 tests) - config (3) + data layer (5) + schema (8): test_valid_signal_roundtrip, test_invalid_tp_count, test_invalid_tp_sum, test_confidence_bounds, test_entry_requirements, test_symbol_uppercased, test_rationale_max_length, test_max_capital_pct_bounds
+**Decision IDs / Commits:** (will be added after commit)
+**Next Action:** Step 6 – Signal Generation (generate_signal) using breakout pattern. 
