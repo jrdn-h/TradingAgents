@@ -134,4 +134,13 @@ From pyproject.toml - **Required for MVP**:
 **Test Result:** PASS (29 tests) - config (3) + data layer (5) + schema (8) + signal generation (6) + risk gate (7): test_apply_risk_accepts_valid_signal, test_apply_risk_rejects_small_distance, test_apply_risk_rejects_large_distance, test_apply_risk_rejects_low_rr, test_apply_risk_caps_max_capital_pct, test_apply_risk_insufficient_candles, test_apply_risk_handles_short_signals  
 **Note:** pytest -k risk_gate fails due to vendor/freqtrade missing deps; use scoped directory instead
 **Decision IDs / Commits:** cc2d90b1a2b3c4d5e6f7g8h9i0j1k2l3m4n5o6p
-**Next Action:** Step 8 – Redis Publish/Consume layer. 
+**Next Action:** Step 8 – Redis Publish/Consume layer.
+
+## Step 8: Redis Publish/Consume
+**Timestamp (UTC):** 2025-07-20 00:04
+**Description:** Implemented Redis signal queue (publish & freshness-filtered fetch) with safe removal; added comprehensive tests with MockRedis for reliability.
+**Files Added/Modified:** integration/publish.py, integration/tests/test_publish_consume.py, integration/VERSIONS.toml, infrastructure_update.md
+**Tests Run:** pytest integration/tests/test_publish_consume.py -v ; pytest integration/tests/ -q
+**Test Result:** PASS (36 tests) - config (3) + data layer (5) + schema (8) + signal generation (6) + risk gate (7) + publish/consume (7): test_publish_and_fetch_signal_success, test_fetch_ignores_other_symbol, test_fetch_stale_signal, test_fetch_no_signal, test_idempotent_publish_fetch_cycle, test_symbol_case_handling, test_malformed_json_handling
+**Decision IDs / Commits:** (will be added after commit)
+**Next Action:** Step 9 – Strategy Bridge (AgentBridgeStrategy). 
