@@ -248,5 +248,5 @@ From pyproject.toml - **Required for MVP**:
 **Files Modified:** envs/core.txt (added pandas), envs/freqtrade-extra.txt (removed pandas), infrastructure_update.md
 **Tests Run:** pytest integration/tests/test_strategy_bridge.py -q ; pytest integration/tests/ -q
 **Test Result:** PASS (68 tests total, 10 strategy tests)
-**Decision IDs / Commits:** (will be added after commit)
+**Decision IDs / Commits:** 7eac2e4
 **Next Action:** Resume Step 16 – CI & Environments commit sequence. 
