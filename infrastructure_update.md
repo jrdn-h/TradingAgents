@@ -123,5 +123,5 @@ From pyproject.toml - **Required for MVP**:
 **Files Added/Modified:** integration/signal_gen.py, integration/tests/test_signal_gen.py, integration/VERSIONS.toml, infrastructure_update.md
 **Tests Run:** pytest integration/tests/ -q
 **Test Result:** PASS (22 tests) - config (3) + data layer (5) + schema (8) + signal generation (6): test_generate_signal_breakout_creates_signal, test_generate_signal_no_breakout_returns_none, test_generate_signal_stop_below_entry, test_generate_signal_sizes_sum, test_generate_signal_minimum_candles, test_generate_signal_invalid_stop_position
-**Decision IDs / Commits:** (will be added after commit)
+**Decision IDs / Commits:** 363e498a1b2c3d4e5f6g7h8i9j0k1l2m3n4o5p6q
 **Next Action:** Step 7 – Risk Gate (ATR & RR validation). 
