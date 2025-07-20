@@ -87,5 +87,5 @@ From pyproject.toml - **Required for MVP**:
 **Files Added/Modified:** integration/VERSIONS.toml, infrastructure_update.md, .gitignore, integration/ (7 dirs), __init__.py files (7)
 **Tests Run:** pytest -q (baseline only, no new tests yet)
 **Test Result:** PASS (2 collection errors from vendor/freqtrade due to missing freqtrade dependencies - expected and not blocking)
-**Decision IDs / Commits:** (will be added after commit)
+**Decision IDs / Commits:** 8a9567d73a62dc82c8f5f8a8e0fab5e5b5306e5f
 **Next Action:** Proceed to Step 3 – Configuration & .env setup. 
