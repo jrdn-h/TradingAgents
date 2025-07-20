@@ -1,0 +1,8 @@
+[freqtrade]
+repo = "https://github.com/freqtrade/freqtrade"
+commit = "cc807d1cf945d02e6c3fb2689f2602a729ec28cf"
+tag = "2024.2"
+
+[bridge]
+schema_version = "1.0"
+implementation_phase = 1 
