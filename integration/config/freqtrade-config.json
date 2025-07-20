@@ -1,0 +1,27 @@
+{
+  "dry_run": true,
+  "dry_run_wallet": 10000,
+  "timeframe": "5m",
+  "max_open_trades": 2,
+  "stake_currency": "USDT",
+  "stake_amount": "unlimited",
+  "fiat_display_currency": "USD",
+  "exchange": {
+    "name": "binance",
+    "key": "",
+    "secret": "",
+    "ccxt_config": {},
+    "ccxt_async_config": {},
+    "pair_whitelist": ["BTC/USDT"],
+    "pair_blacklist": []
+  },
+  "pairlists": [
+    {"method": "StaticPairList"}
+  ],
+  "telegram": {
+    "enabled": false
+  },
+  "api_server": {
+    "enabled": false
+  }
+} 

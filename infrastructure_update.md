@@ -143,4 +143,13 @@ From pyproject.toml - **Required for MVP**:
 **Tests Run:** pytest integration/tests/test_publish_consume.py -v ; pytest integration/tests/ -q
 **Test Result:** PASS (36 tests) - config (3) + data layer (5) + schema (8) + signal generation (6) + risk gate (7) + publish/consume (7): test_publish_and_fetch_signal_success, test_fetch_ignores_other_symbol, test_fetch_stale_signal, test_fetch_no_signal, test_idempotent_publish_fetch_cycle, test_symbol_case_handling, test_malformed_json_handling
 **Decision IDs / Commits:** 199a987bcdef1234567890abcdef1234567890ab
-**Next Action:** Step 9 – Strategy Bridge (AgentBridgeStrategy). 
+**Next Action:** Step 9 – Strategy Bridge (AgentBridgeStrategy).
+
+## Step 9: Strategy Bridge
+**Timestamp (UTC):** 2025-07-20 00:09
+**Description:** Added AgentBridgeStrategy to consume Redis-backed signals, set entry flag, dynamic stoploss & simple TP1 exit, plus unit tests with mocked freqtrade imports.
+**Files Added/Modified:** integration/strategy/AgentBridgeStrategy.py, integration/tests/test_strategy_bridge.py, integration/config/freqtrade-config.json, integration/VERSIONS.toml, infrastructure_update.md
+**Tests Run:** pytest integration/tests/test_strategy_bridge.py -v ; pytest integration/tests/ -q
+**Test Result:** PASS (47 tests) - config (3) + data layer (5) + schema (8) + signal generation (6) + risk gate (7) + publish/consume (7) + strategy bridge (11): test_populate_entry_trend_with_signal, test_populate_entry_trend_no_signal, test_populate_entry_trend_empty_dataframe, test_custom_stoploss_calculation, test_custom_stoploss_no_metadata, test_custom_stoploss_invalid_entry_price, test_custom_exit_tp1_not_hit, test_custom_exit_tp1_hit, test_custom_exit_no_metadata, test_strategy_configuration, test_populate_indicators_passthrough
+**Decision IDs / Commits:** (will be added after commit)
+**Next Action:** Step 10 – Logging utilities (decision & trade results CSV). 
