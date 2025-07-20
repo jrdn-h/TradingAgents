@@ -11,8 +11,12 @@ from integration.config.config import load_config, Config, RiskSettings, RISK_DE
 class TestConfigLoader:
     """Test cases for configuration loading and validation."""
 
-    def test_load_config_success(self, tmp_path):
+    def test_load_config_success(self, tmp_path, monkeypatch):
         """Test successful configuration loading with all required variables."""
+        # Clear any existing environment variables to avoid pollution
+        for var in ['REDIS_URL', 'DEFAULT_SYMBOL', 'TIMEFRAME', 'MAX_CAPITAL_PCT', 'MODEL_NAME']:
+            monkeypatch.delenv(var, raising=False)
+        
         # Create temporary .env file
         env_file = tmp_path / ".env.test"
         env_content = """REDIS_URL=redis://localhost:6379/0

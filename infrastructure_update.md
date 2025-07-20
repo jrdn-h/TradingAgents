@@ -249,4 +249,13 @@ From pyproject.toml - **Required for MVP**:
 **Tests Run:** pytest integration/tests/test_strategy_bridge.py -q ; pytest integration/tests/ -q
 **Test Result:** PASS (68 tests total, 10 strategy tests)
 **Decision IDs / Commits:** 7eac2e4
-**Next Action:** Resume Step 16 – CI & Environments commit sequence. 
+**Next Action:** Resume Step 16 – CI & Environments commit sequence.
+
+## Hotfix: Fix MODEL_NAME test isolation
+**Timestamp (UTC):** 2025-07-20 01:05
+**Description:** Enhanced config loader test robustness by clearing environment variables with monkeypatch and adding override=True to dotenv loading to prevent environment pollution.
+**Files Modified:** integration/tests/test_config_loader.py, integration/config/config.py, infrastructure_update.md
+**Tests Run:** pytest integration/tests/test_config_loader.py -q ; pytest integration/tests/ -q
+**Test Result:** PASS (68 tests total, 3 config tests)
+**Decision IDs / Commits:** (will be added after commit)
+**Next Action:** Resume Step 16 – CI & Environments workflow validation. 

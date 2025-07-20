@@ -52,7 +52,7 @@ def load_config(env_file: str = '.env') -> Config | NoReturn:
     """
     # Load .env file if it exists
     if os.path.exists(env_file):
-        load_dotenv(env_file)
+        load_dotenv(env_file, override=True)
     
     # Required environment variables
     required_vars = ['REDIS_URL', 'DEFAULT_SYMBOL', 'TIMEFRAME', 'MAX_CAPITAL_PCT', 'MODEL_NAME']
