@@ -23,15 +23,30 @@ def run_cycle(symbol_override: str | None = None, preview: bool = False) -> dict
     Returns:
         Dict containing cycle status and results
     """
-    # Load configuration
-    cfg = load_config()
+    # Load configuration (use defaults for preview mode if env vars missing)
+    try:
+        cfg = load_config()
+    except RuntimeError as e:
+        if preview and "Missing required environment variables" in str(e):
+            # Provide sensible defaults for preview mode
+            from integration.config.config import Config, RiskSettings, RISK_DEFAULT
+            cfg = Config(
+                symbol="BTC/USDT",
+                timeframe="5m", 
+                max_capital_pct=0.05,
+                model_name="preview-mode",
+                risk=RiskSettings(**RISK_DEFAULT)
+            )
+        else:
+            raise
+    
     symbol = (symbol_override or cfg.symbol).upper()
     
     # Fetch market data
     candles = get_candles(symbol, limit=250)
     
     # Generate raw signal
-    raw_signal = generate_signal(candles)
+    raw_signal = generate_signal(symbol, limit=250)
     if not raw_signal:
         return {
             "status": "no_trade",
